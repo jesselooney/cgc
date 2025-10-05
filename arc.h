@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-void* arc_alloc(size_t size);
+void arc_alloc(void **p, size_t size);
 
 void arc_set_destructor(void *p, void (*destructor)(void*));
 
