@@ -1,4 +1,5 @@
 #include <stdbool.h>
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -96,6 +97,7 @@ void arc_set_map_ptrs(
     void (*map_ptrs)(void*, void (*f)(void*))
 )
 {
-    if(arc_is_heap_ptr(p))
+    if (arc_is_heap_ptr(p))
         arc_get_header_ptr(p)->map_ptrs = map_ptrs;
 }
+

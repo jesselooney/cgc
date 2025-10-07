@@ -1,12 +1,33 @@
-CFLAGS = -Wno-incompatible-pointer-types
+TARGET = main
+SRC = src
+INCLUDE = include
+OBJ = obj
+BIN = bin
 
-main: arc.h arc.o
+CC = gcc
+CFLAGS += -I $(INCLUDE)
+CFLAGS += -Wno-incompatible-pointer-types
+
+LINKER = gcc
+
+SOURCES := $(wildcard $(SRC)/*.c)
+HEADERS := $(wildcard $(INCLUDE)/*.h)
+OBJECTS := $(SOURCES:$(SRC)/%.c=$(OBJ)/%.o)
+
+$(BIN)/$(TARGET): $(OBJECTS)
+	@mkdir -p $(@D)
+	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
+
+$(OBJECTS): $(OBJ)/%.o : $(SRC)/%.c $(HEADERS)
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm main *.o
+	rm -r $(OBJ) $(BIN)
 
 format:
 	# Requires GNU Indent
-	indent -kr --no-tabs *.c
-	rm *.c~
+	@VERSION_CONTROL=never indent -kr --no-tabs $(SOURCES)
+
+.PHONY: clean format
 
