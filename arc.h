@@ -1,12 +1,19 @@
 #include <stddef.h>
 
+// macro
+
 void arc_alloc(void **p, size_t size);
 
-void arc_set_destructor(void *p, void (*destructor)(void*));
-
-void arc_create(void *p);
-
-void arc_delete(void **p);
-
 void arc_assign(void **p, void *q);
+
+void arc_register(int numargs, ...);
+
+//void arc_delete(void **p);
+//void arc_create(void *p);
+void arc_scope_start(int numargs, ...);
+void arc_scope_end();
+
+//void arc_set_destructor(void *p, void (*destructor)(void*));
+void arc_set_ptr_finder(void *p, void (*ptr_finder)(void*));
+
 
