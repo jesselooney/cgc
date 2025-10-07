@@ -1,41 +1,45 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "arc.h"
+//#include "arc.h"
+#define GC_ARC
+#include "gc.h"
 
 typedef struct list {
     uint8_t head;
     struct list *tail;
 } list_t;
 
-void destroy_list(list_t *a)
+void list_map_ptrs(list_t *a, void (*f)(void*))
 {
     printf("Destroying list with head = %d\n", a->head);
-    arc_delete(&a->tail);
+    (*f)(&a->tail);
 }
 
 int main()
 {
     list_t *a, *b, *c;
 
-    arc_alloc(&a, sizeof(list_t));
-    arc_set_destructor(a, destroy_list);
+    gc_alloc(&a, sizeof(list_t));
+    gc_set_map_ptrs(a, list_map_ptrs);
     a->head = 0;
     a->tail = NULL;
 
-    arc_alloc(&b, sizeof(list_t));
-    arc_set_destructor(b, destroy_list);
+    gc_alloc(&b, sizeof(list_t));
+    gc_set_map_ptrs(b, list_map_ptrs);
     b->head = 1;
     b->tail = NULL;
 
-    arc_alloc(&c, sizeof(list_t));
-    arc_set_destructor(c, destroy_list);
+    gc_alloc(&c, sizeof(list_t));
+    gc_set_map_ptrs(c, list_map_ptrs);
     c->head = 2;
     c->tail = NULL;
 
-    arc_assign(&a->tail, b);
-    arc_assign(&b->tail, c);
-    //arc_assign(&c->tail, a);
+    gc_assign(&a->tail, b);
+    //gc_assign(&b->tail, c);
+    gc_assign(&c->tail, a);
+
+    //gc_register(a, c);
 
     puts("Deleting c");
     arc_delete(&c);
