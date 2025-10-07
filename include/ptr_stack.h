@@ -4,4 +4,3 @@
 static stack_t *PTR_STACK = NULL;
 
 #endif
-

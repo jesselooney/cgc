@@ -22,12 +22,15 @@ $(OBJECTS): $(OBJ)/%.o : $(SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+run:
+	$(BIN)/$(TARGET)
+
 clean:
 	rm -r $(OBJ) $(BIN)
 
 format:
-	# Requires GNU Indent
-	@VERSION_CONTROL=never indent -kr --no-tabs $(SOURCES)
+	@# Requires GNU Indent
+	VERSION_CONTROL=never indent -kr --no-tabs $(SOURCES) $(HEADERS)
 
-.PHONY: clean format
+.PHONY: run clean format
 

@@ -5,17 +5,16 @@
 #define ARG_COUNT(...) (sizeof((void*[]) {__VA_ARGS__}) / sizeof(void*))
 
 #ifdef GC_ARC
-    #include "arc.h"
+#include "arc.h"
 
-    #define gc_alloc(P, SIZE) arc_alloc(P, SIZE)
-    #define gc_assign(P, Q) arc_assign(P, Q)
-    #define gc_register(...) arc_register(ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+#define gc_alloc(P, SIZE) arc_alloc(P, SIZE)
+#define gc_assign(P, Q) arc_assign(P, Q)
+#define gc_register(...) arc_register(ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
-    #define gc_set_map_ptrs(P, MAP_PTRS) arc_set_map_ptrs(P, MAP_PTRS)
+#define gc_set_map_ptrs(P, MAP_PTRS) arc_set_map_ptrs(P, MAP_PTRS)
 #endif
-    
+
 //void gc_scope_start(int numargs, ...);
 //void gc_scope_end();
 
 #endif
-

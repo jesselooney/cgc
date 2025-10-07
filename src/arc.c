@@ -9,7 +9,7 @@
 
 typedef struct {
     size_t ref_count;
-    void (*map_ptrs)(void*, void (*f)(void*));
+    void (*map_ptrs)(void *, void (*f)(void *));
 } arc_header_t;
 
 static arc_header_t *arc_get_header_ptr(void *p)
@@ -28,7 +28,7 @@ static void arc_dec(void *p)
     header->ref_count--;
     if (header->ref_count <= 0) {
         if (header->map_ptrs != NULL)
-            (*header->map_ptrs)(p, arc_delete);
+            (*header->map_ptrs) (p, arc_delete);
         free(header);
     }
 }
@@ -50,7 +50,7 @@ void arc_alloc(void **p, size_t size)
     header->ref_count = 1;
     header->map_ptrs = NULL;
 
-    *p = (void*) (header + 1);
+    *p = (void *) (header + 1);
 }
 
 void arc_assign(void **p, void *q)
@@ -71,12 +71,13 @@ void arc_assign(void **p, void *q)
 //        arc_inc(p);
 //}
 
-void arc_register(int arg_count, ...) {
+void arc_register(int arg_count, ...)
+{
     va_list args;
     va_start(args, arg_count);
 
     for (int i = 0; i < arg_count; i++) {
-        void *p = va_arg(args, void*);
+        void *p = va_arg(args, void *);
         if (arc_is_heap_ptr(p))
             arc_inc(p);
     }
@@ -92,12 +93,9 @@ void arc_delete(void **p)
     *p = NULL;
 }
 
-void arc_set_map_ptrs(
-    void *p,
-    void (*map_ptrs)(void*, void (*f)(void*))
-)
+void arc_set_map_ptrs(void *p, void (*map_ptrs)(void *, void (*f)(void *))
+    )
 {
     if (arc_is_heap_ptr(p))
         arc_get_header_ptr(p)->map_ptrs = map_ptrs;
 }
-

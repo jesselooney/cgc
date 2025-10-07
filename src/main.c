@@ -10,10 +10,10 @@ typedef struct list {
     struct list *tail;
 } list_t;
 
-void list_map_ptrs(list_t *a, void (*f)(void*))
+void list_map_ptrs(list_t *a, void (*f)(void *))
 {
     printf("Destroying list with head = %d\n", a->head);
-    (*f)(&a->tail);
+    (*f) (&a->tail);
 }
 
 int main()
