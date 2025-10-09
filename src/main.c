@@ -18,7 +18,11 @@ void list_map_ptrs(list_t *a, void (*f)(void *))
 
 int main()
 {
+    gc_scope_init();
+
     list_t *a, *b, *c;
+
+    gc_scope_start(&a, &b, &c);
 
     gc_alloc(&a, sizeof(list_t));
     gc_set_map_ptrs(a, list_map_ptrs);
@@ -47,6 +51,8 @@ int main()
     arc_delete(&b);
     puts("Deleting a");
     arc_delete(&a);
+
+    gc_scope_end();
 
     return 0;
 }
