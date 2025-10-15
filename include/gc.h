@@ -20,6 +20,7 @@
 #define gc_scope_init() ptr_stack_init()
 
 #define gc_scope_start(...) ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+#define gc_scope_declare(T, N) T N; ptr_stack_push(&N);
 #define gc_scope_end() ptr_stack_scope_end()
 
 #endif
