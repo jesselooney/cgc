@@ -15,8 +15,11 @@ stack_t *PTR_STACK = NULL;
 // ==============================================
 
 void ptr_stack_init();
+
 void ptr_stack_push(void **p);
+
 void ptr_stack_scope_start(int arg_count, ...);
+
 void ptr_stack_scope_end();
 
 // ==============================================
