@@ -16,9 +16,9 @@ void arc_alloc(void **p, size_t size,
 
 void arc_assign(void **p, void *q);
 
-void arc_register(int arg_count, ...);
-
 void arc_delete(void **p);
+
+void arc_params(int arg_count, ...);
 
 // ==============================================
 // Definitions
