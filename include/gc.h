@@ -1,19 +1,27 @@
 #ifndef GC_H
 #define GC_H
 
-// Should only be called on argument lists whose elements are pointers.
+// defined for void*
 #define ARG_COUNT(...) (sizeof((void*[]) {__VA_ARGS__}) / sizeof(void*))
 
-#if GC_ARC
-    #include "arc.h"
-
-    #define gc_alloc(P, T) arc_alloc(P, sizeof(T), T ## __map_ptrs)
-    #define gc_assign(P, Q) arc_assign(P, Q)
+// ==============================================
+// ARC
+// ==============================================
+#ifdef GC_ARC
+#include "arc.h"
+#define gc_alloc(P, T) arc_alloc(P, sizeof(T), T ## __map_ptrs)
+#define gc_assign(P, Q) arc_assign(P, Q)
 #endif
 
-#if GC_TRC
+// ==============================================
+// TRC
+// ==============================================
+#ifdef GC_TRC
 #endif
 
+// ==============================================
+// SHARED
+// ==============================================
 #include "ptr_stack.h"
 
 #define gc_scope_start(...) ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), ## __VA_ARGS__)

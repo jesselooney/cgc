@@ -7,10 +7,12 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-/////////////////////////////////////////////
-// public signatures
+// ==============================================
+// Signatures
+// ==============================================
 
-void arc_alloc(void **p, size_t size, void (*map_ptrs)(void *, void(*f)(void *)));
+void arc_alloc(void **p, size_t size,
+               void (*map_ptrs)(void *, void (*f)(void *)));
 
 void arc_assign(void **p, void *q);
 
@@ -18,14 +20,14 @@ void arc_delete(void **p);
 
 void arc_params(int arg_count, ...);
 
-////////////////////////////////////////////////
-// private defs
+// ==============================================
+// Definitions
+// ==============================================
 
 typedef struct {
     size_t ref_count;
-    void (*map_ptrs)(void *, void (*f)(void *));
+    void (*map_ptrs)(void *, void(*f)(void *));
 } arc_header_t;
-
 
 static arc_header_t *_arc_get_header_ptr(void *p)
 {
@@ -54,10 +56,8 @@ static bool _arc_is_heap_ptr(void *p)
     return p != NULL;
 }
 
-/////////////////////////////////////////////
-// public defs
-
-void arc_alloc(void **p, size_t size, void (*map_ptrs)(void *, void(*f)(void *)))
+void arc_alloc(void **p, size_t size,
+               void (*map_ptrs)(void *, void (*f)(void *)))
 {
     arc_header_t *header = malloc(size + sizeof(arc_header_t));
 
@@ -100,7 +100,5 @@ void arc_delete(void **p)
 
     *p = NULL;
 }
-
-
 
 #endif

@@ -9,7 +9,7 @@ typedef struct list {
     struct list *tail;
 } list_t;
 
-void list_t__map_ptrs(list_t *a, void (*f)(void *))
+void list_t__map_ptrs(list_t * a, void (*f)(void *))
 {
     printf("Destroying list with head = %d\n", a->head);
     (*f) (&a->tail);
@@ -20,9 +20,9 @@ int main()
     gc_init();
 
     gc_scope_start();
-    gc_scope_declare(list_t*, a);
-    gc_scope_declare(list_t*, b);
-    gc_scope_declare(list_t*, c);
+    gc_scope_declare(list_t *, a);
+    gc_scope_declare(list_t *, b);
+    gc_scope_declare(list_t *, c);
 
     gc_alloc(&a, list_t);
     a->head = 0;
@@ -43,11 +43,11 @@ int main()
     //gc_register(a, c);
 
     /* puts("Deleting c");
-    arc_delete(&c);
-    puts("Deleting b");
-    arc_delete(&b);
-    puts("Deleting a");
-    arc_delete(&a); */
+       arc_delete(&c);
+       puts("Deleting b");
+       arc_delete(&b);
+       puts("Deleting a");
+       arc_delete(&a); */
 
     gc_scope_end();
 
