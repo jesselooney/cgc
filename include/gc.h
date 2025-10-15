@@ -9,7 +9,6 @@
 
 #define gc_alloc(P, T) arc_alloc(P, sizeof(T), T ## __map_ptrs)
 #define gc_assign(P, Q) arc_assign(P, Q)
-#define gc_register(...) arc_register(ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 #endif
 

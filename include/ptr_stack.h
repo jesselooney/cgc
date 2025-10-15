@@ -58,7 +58,9 @@ void ptr_stack_scope_end() {
     while (1) {
         p = stack_pop(PTR_STACK);
         if (p == NULL) break;
+        #IFDEF GC_ARC
         arc_delete(p);
+        #ENDIF
     }
 }
 
