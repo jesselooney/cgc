@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-//#include "arc.h"
 #define GC_ARC
 #include "gc.h"
 
@@ -10,7 +9,7 @@ typedef struct list {
     struct list *tail;
 } list_t;
 
-void list_map_ptrs(list_t *a, void (*f)(void *))
+void list_t__map_ptrs(list_t *a, void (*f)(void *))
 {
     printf("Destroying list with head = %d\n", a->head);
     (*f) (&a->tail);
@@ -18,24 +17,22 @@ void list_map_ptrs(list_t *a, void (*f)(void *))
 
 int main()
 {
-    gc_scope_init();
+    gc_init();
 
-    list_t *a, *b, *c;
+    gc_scope_start();
+    gc_scope_declare(list_t*, a);
+    gc_scope_declare(list_t*, b);
+    gc_scope_declare(list_t*, c);
 
-    gc_scope_start(&a, &b, &c);
-
-    gc_alloc(&a, sizeof(list_t));
-    gc_set_map_ptrs(a, list_map_ptrs);
+    gc_alloc(&a, list_t);
     a->head = 0;
     a->tail = NULL;
 
-    gc_alloc(&b, sizeof(list_t));
-    gc_set_map_ptrs(b, list_map_ptrs);
+    gc_alloc(&b, list_t);
     b->head = 1;
     b->tail = NULL;
 
-    gc_alloc(&c, sizeof(list_t));
-    gc_set_map_ptrs(c, list_map_ptrs);
+    gc_alloc(&c, list_t);
     c->head = 2;
     c->tail = NULL;
 
@@ -45,12 +42,12 @@ int main()
 
     //gc_register(a, c);
 
-    puts("Deleting c");
+    /* puts("Deleting c");
     arc_delete(&c);
     puts("Deleting b");
     arc_delete(&b);
     puts("Deleting a");
-    arc_delete(&a);
+    arc_delete(&a); */
 
     gc_scope_end();
 

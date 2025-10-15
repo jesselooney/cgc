@@ -10,15 +10,13 @@
 /////////////////////////////////////////////
 // public signatures
 
-void arc_alloc(void **p, size_t size);
+void arc_alloc(void **p, size_t size, void (*map_ptrs)(void *, void(*f)(void *)));
 
 void arc_assign(void **p, void *q);
 
 void arc_register(int arg_count, ...);
 
 void arc_delete(void **p);
-
-void arc_set_map_ptrs(void *p, void (*map_ptrs)(void *, void(*f)(void *)));
 
 ////////////////////////////////////////////////
 // private defs
@@ -59,12 +57,12 @@ static bool _arc_is_heap_ptr(void *p)
 /////////////////////////////////////////////
 // public defs
 
-void arc_alloc(void **p, size_t size)
+void arc_alloc(void **p, size_t size, void (*map_ptrs)(void *, void(*f)(void *)))
 {
     arc_header_t *header = malloc(size + sizeof(arc_header_t));
 
     header->ref_count = 1;
-    header->map_ptrs = NULL;
+    header->map_ptrs = map_ptrs;
 
     *p = (void *) (header + 1);
 }
@@ -102,15 +100,6 @@ void arc_delete(void **p)
 
     *p = NULL;
 }
-
-void arc_set_map_ptrs(void *p, void (*map_ptrs)(void *, void (*f)(void *))
-    )
-{
-    if (_arc_is_heap_ptr(p))
-        _arc_get_header_ptr(p)->map_ptrs = map_ptrs;
-}
-
-
 
 
 
