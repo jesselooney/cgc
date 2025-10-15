@@ -6,34 +6,31 @@
 #include <stdarg.h>
 
 #include "arc.h"
-
-typedef struct {
-    void** arr[1000];
-    int    top;
-} stack_t;
+#include "stack.h"
 
 stack_t *PTR_STACK = NULL;
 
 void  ptr_stack_init() {
-    //printf("\tDEBUG: ptr_stack_init(): entry\n");
-    PTR_STACK = (stack_t *) (malloc(sizeof(stack_t)));
-    PTR_STACK->top = -1;
-
+    PTR_STACK = stack_init();
     printf("\tDEBUG: ptr_stack_init(): Created PTR_STACK at %p\n", PTR_STACK);
 }
 
 void  ptr_stack_push_break() {
-    PTR_STACK->arr[++PTR_STACK->top] = NULL;
+    stack_push(PTR_STACK, NULL);
     printf("\tDEBUG: ptr_stack_push_break(): Pushed null to PTR_STACK at index %d\n", PTR_STACK->top);
 }
 
 void  ptr_stack_push(void **p) {
-    PTR_STACK->arr[++PTR_STACK->top] = p;
+    if (p == NULL) {
+        printf("\tERROR: ptr_stack_push(): pushed a null pointer to the scope stack\n");
+        exit(1);
+    }
+    stack_push(PTR_STACK, p);
     printf("\tDEBUG: ptr_stack_push(): Pushed address %p to PTR_STACK at index %d\n", p, PTR_STACK->top);
 }
 
 void** ptr_stack_pop() {
-    void** p = PTR_STACK->arr[PTR_STACK->top--];
+    void** p = stack_pop(PTR_STACK);
     printf("\tDEBUG: ptr_stack_pop(): Popped address %p from PTR_STACK at index %d\n", p, PTR_STACK->top+1);
     return p;
 }
@@ -56,10 +53,10 @@ void ptr_stack_scope_start(int arg_count, ...) {
 }
 
 void ptr_stack_scope_end() {
-    printf("\tDEBUG: ptr_stack_scope_start(): Entering...\n");
+    printf("\tDEBUG: ptr_stack_scope_end(): Entering...\n");
     void** p;
     while (1) {
-        p = ptr_stack_pop();
+        p = stack_pop(PTR_STACK);
         if (p == NULL) break;
         arc_delete(p);
     }
