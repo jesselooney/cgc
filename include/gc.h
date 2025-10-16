@@ -8,9 +8,11 @@
 // ARC
 // ==============================================
 #ifdef GC_ARC
+
 #include "arc.h"
 #define gc_alloc(P, T) arc_alloc(P, sizeof(T), T ## __map_ptrs)
 #define gc_assign(P, Q) arc_assign(P, Q)
+
 #endif
 
 // ==============================================

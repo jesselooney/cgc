@@ -11,7 +11,9 @@ typedef struct {
 // ==============================================
 
 stack_t *stack_init();
+
 void stack_push(stack_t * s, void **p);
+
 void **stack_pop(stack_t * s);
 
 // ==============================================
