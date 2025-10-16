@@ -7,6 +7,9 @@ BIN = bin
 CC = gcc
 CFLAGS += -I $(INCLUDE)
 CFLAGS += -Wno-incompatible-pointer-types
+ifdef DBG
+	CFLAGS += -g -DDBG=$(DBG)
+endif
 
 LINKER = gcc
 

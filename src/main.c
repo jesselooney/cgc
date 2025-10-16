@@ -4,6 +4,8 @@
 #define GC_ARC
 #include "gc.h"
 
+#include "debug.h"
+
 typedef struct list {
     uint8_t head;
     struct list *tail;
@@ -18,6 +20,10 @@ void list_t__map_ptrs(list_t * a, void (*f)(void *))
 int main()
 {
     gc_init();
+
+    debug(1, "hi");
+    debug(2, "secret %d", 42);
+    debug(3, "secret 2 %d", 333);
 
     gc_scope_start();
     gc_scope_declare(list_t *, a);
