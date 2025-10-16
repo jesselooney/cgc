@@ -7,8 +7,11 @@ BIN = bin
 CC = gcc
 CFLAGS += -I $(INCLUDE)
 CFLAGS += -Wno-incompatible-pointer-types
+ifdef V
+	CFLAGS += -DVERBOSITY=$(V)
+endif
 ifdef DBG
-	CFLAGS += -g -DDBG=$(DBG)
+	CFLAGS += -g
 endif
 
 LINKER = gcc

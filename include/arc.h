@@ -1,65 +1,48 @@
 #ifndef ARC_H
 #define ARC_H
 
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include "debug.h"
 
 // ==============================================
-// Signatures
+// Members
 // ==============================================
+
+typedef struct {
+    size_t ref_count;
+    void (*map_ptrs)(void *, void (*f)(void *));
+} _arc_header_t;
 
 void arc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void (*f)(void *)));
 
 void arc_assign(void **p, void *q);
 
-void arc_delete(void **p);
+void arc_register(void *p);
 
-void arc_params(int arg_count, ...);
+void arc_deregister(void *p);
+
+static _arc_header_t *_arc_get_header_ptr(void *p);
+
+static bool _arc_is_heap_ptr(void *p);
+
+static void _arc_inc(void *p);
+
+static void _arc_dec(void *p);
 
 // ==============================================
 // Definitions
 // ==============================================
 
-typedef struct {
-    size_t ref_count;
-    void (*map_ptrs)(void *, void(*f)(void *));
-} arc_header_t;
-
-static arc_header_t *_arc_get_header_ptr(void *p)
-{
-    return (arc_header_t *) p - 1;
-}
-
-static void _arc_inc(void *p)
-{
-    _arc_get_header_ptr(p)->ref_count++;
-}
-
-static void _arc_dec(void *p)
-{
-    arc_header_t *header = _arc_get_header_ptr(p);
-    header->ref_count--;
-    if (header->ref_count <= 0) {
-        if (header->map_ptrs != NULL)
-            (*header->map_ptrs) (p, arc_delete);
-        free(header);
-    }
-}
-
-static bool _arc_is_heap_ptr(void *p)
-{
-    // TODO: Implement this.
-    return p != NULL;
-}
-
 void arc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void (*f)(void *)))
 {
-    arc_header_t *header = malloc(size + sizeof(arc_header_t));
+    _arc_header_t *header = malloc(size + sizeof(_arc_header_t));
 
     header->ref_count = 1;
     header->map_ptrs = map_ptrs;
@@ -79,26 +62,52 @@ void arc_assign(void **p, void *q)
     *p = q;
 }
 
-void arc_register(int arg_count, ...)
+void arc_register(void *p)
 {
-    va_list args;
-    va_start(args, arg_count);
-
-    for (int i = 0; i < arg_count; i++) {
-        void *p = va_arg(args, void *);
-        if (_arc_is_heap_ptr(p))
-            _arc_inc(p);
-    }
-
-    va_end(args);
+    log_trace("arc_register(%p)", p);
+    if (_arc_is_heap_ptr(p))
+        _arc_inc(p);
 }
 
-void arc_delete(void **p)
+void arc_deregister(void *p)
 {
-    if (_arc_is_heap_ptr(*p))
-        _arc_dec(*p);
+    log_trace("arc_deregister(%p)", p);
+    if (_arc_is_heap_ptr(p))
+        _arc_dec(p);
+}
 
-    *p = NULL;
+static _arc_header_t *_arc_get_header_ptr(void *p)
+{
+    return (_arc_header_t *) p - 1;
+}
+
+static bool _arc_is_heap_ptr(void *p)
+{
+    // TODO: Implement this.
+    return p != NULL;
+}
+
+static void _arc_inc(void *p)
+{
+    log_info("_arc_inc(%p)", p);
+    _arc_header_t *header = _arc_get_header_ptr(p);
+    header->ref_count++;
+    log_debug("ref_count++ == %ld", header->ref_count);
+
+}
+
+static void _arc_dec(void *p)
+{
+    log_info("_arc_dec(%p)", p);
+    _arc_header_t *header = _arc_get_header_ptr(p);
+    header->ref_count--;
+    log_debug("ref_count-- == %ld", header->ref_count);
+
+    if (header->ref_count <= 0) {
+        if (header->map_ptrs != NULL)
+            (*header->map_ptrs) (p, arc_deregister);
+        free(header);
+    }
 }
 
 #endif

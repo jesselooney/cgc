@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #define GC_ARC
-#include "gc.h"
 
+#include "cgc.h"
 #include "debug.h"
 
 typedef struct list {
@@ -14,48 +14,35 @@ typedef struct list {
 void list_t__map_ptrs(list_t * a, void (*f)(void *))
 {
     printf("Destroying list with head = %d\n", a->head);
-    (*f) (&a->tail);
+    (*f) (a->tail);
 }
 
 int main()
 {
-    gc_init();
+    cgc_init();
 
-    debug(1, "hi");
-    debug(2, "secret %d", 42);
-    debug(3, "secret 2 %d", 333);
+    cgc_scope_start();
+    cgc_scope_declare(list_t *, a);
+    cgc_scope_declare(list_t *, b);
+    cgc_scope_declare(list_t *, c);
 
-    gc_scope_start();
-    gc_scope_declare(list_t *, a);
-    gc_scope_declare(list_t *, b);
-    gc_scope_declare(list_t *, c);
-
-    gc_alloc(&a, list_t);
+    cgc_alloc(&a, list_t);
     a->head = 0;
     a->tail = NULL;
 
-    gc_alloc(&b, list_t);
+    cgc_alloc(&b, list_t);
     b->head = 1;
     b->tail = NULL;
 
-    gc_alloc(&c, list_t);
+    cgc_alloc(&c, list_t);
     c->head = 2;
     c->tail = NULL;
 
-    gc_assign(&a->tail, b);
-    //gc_assign(&b->tail, c);
-    gc_assign(&c->tail, a);
+    cgc_assign(&a->tail, b);
+    //cgc_assign(&b->tail, c);
+    cgc_assign(&c->tail, a);
 
-    //gc_register(a, c);
-
-    /* puts("Deleting c");
-       arc_delete(&c);
-       puts("Deleting b");
-       arc_delete(&b);
-       puts("Deleting a");
-       arc_delete(&a); */
-
-    gc_scope_end();
+    cgc_scope_end();
 
     return 0;
 }
