@@ -18,13 +18,13 @@ typedef struct {
 
 stack_t *stack_init();
 
-void stack_push(stack_t *s, void **p);
+void stack_push(stack_t * s, void **p);
 
-void **stack_pop(stack_t *s);
+void **stack_pop(stack_t * s);
 
-void stack_drop(stack_t *s);
+void stack_drop(stack_t * s);
 
-void _stack_grow(stack_t *s);
+void _stack_grow(stack_t * s);
 
 // ==============================================
 // Definitions
@@ -34,11 +34,11 @@ void _stack_grow(stack_t *s)
 {
     log_info("_stack_grow(%p)", s);
     size_t new_max_size = s->max_size * 2;
-    void ***new_items = malloc(sizeof(void**) * new_max_size);
+    void ***new_items = malloc(sizeof(void **) * new_max_size);
 
-    memcpy(s->items, new_items, sizeof(void**) * s->top);
+    memcpy(s->items, new_items, sizeof(void **) * s->top);
     free(s->items);
-    
+
     s->max_size = new_max_size;
     s->items = new_items;
 }
@@ -49,14 +49,15 @@ stack_t *stack_init(size_t initial_size)
 
     s->max_size = initial_size;
     s->top = 0;
-    s->items = malloc(sizeof(void**) * initial_size);
+    s->items = malloc(sizeof(void **) * initial_size);
 
     return s;
 }
 
 void stack_push(stack_t *s, void **p)
 {
-    if (s->top == s->max_size) _stack_grow(s);
+    if (s->top == s->max_size)
+        _stack_grow(s);
     s->items[s->top++] = p;
 }
 
