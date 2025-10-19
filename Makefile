@@ -44,6 +44,10 @@ format:
 # GOLD
 # ===============================================
 
+GOLD_CFLAGS += -I $(INCLUDE)
+GOLD_CFLAGS += -Wno-incompatible-pointer-types
+GOLD_CFLAGS += -DVERBOSITY=5
+
 GOLD_ROOT = test/gold
 GOLD_SRC = $(GOLD_ROOT)/src
 GOLD_OBJ = $(GOLD_ROOT)/obj
@@ -53,16 +57,17 @@ GOLD_SOURCES := $(wildcard $(GOLD_SRC)/*.c)
 GOLD_OBJECTS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_OBJ)/%.o)
 GOLD_TARGETS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%)
 
-$(GOLD_TARGETS) : $(GOLD_OBJECTS)
+$(GOLD_TARGETS) : $(GOLD_SOURCES) $(HEADERS)
 	@mkdir -p $(@D)
-	$(CC) $(LDFLAGS) $(GOLD_OBJECTS) $(LDLIBS) -o $@
-
-$(GOLD_OBJECTS) : $(GOLD_OBJ)/%.o : $(GOLD_SRC)/%.c $(HEADERS)
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(GOLD_CFLAGS) $< -o $@
 
 gold : $(GOLD_TARGETS)
+
+gold_clean :
+	rm -r $(GOLD_OBJ) $(GOLD_BIN)
 
 #gold_generate
 
 #gold_run
+
+
