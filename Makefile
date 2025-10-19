@@ -40,3 +40,29 @@ format:
 
 .PHONY: run clean format
 
+# ===============================================
+# GOLD
+# ===============================================
+
+GOLD_ROOT = test/gold
+GOLD_SRC = $(GOLD_ROOT)/src
+GOLD_OBJ = $(GOLD_ROOT)/obj
+GOLD_BIN = $(GOLD_ROOT)/bin
+
+GOLD_SOURCES := $(wildcard $(GOLD_SRC)/*.c)
+GOLD_OBJECTS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_OBJ)/%.o)
+GOLD_TARGETS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%)
+
+$(GOLD_TARGETS) : $(GOLD_OBJECTS)
+	@mkdir -p $(@D)
+	$(CC) $(LDFLAGS) $(GOLD_OBJECTS) $(LDLIBS) -o $@
+
+$(GOLD_OBJECTS) : $(GOLD_OBJ)/%.o : $(GOLD_SRC)/%.c $(HEADERS)
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+gold : $(GOLD_TARGETS)
+
+#gold_generate
+
+#gold_run
