@@ -56,7 +56,7 @@ void ptr_stack_scope_start(int arg_count, ...)
 
 void ptr_stack_push(void **p)
 {
-    log_trace("ptr_stack_push(%p)", p);
+    log_info("ptr_stack_push(%p)", p);
     if (p == _PTR_STACK_SENTINEL) {
         log_warn("Tried to push sentinel value onto PTR_STACK");
         return;
@@ -77,7 +77,7 @@ void ptr_stack_scope_end()
 void **_ptr_stack_pop()
 {
     void **p = stack_pop(PTR_STACK);
-    log_trace("ptr_stack_pop() == %p", p);
+    log_info("ptr_stack_pop() == %p", p);
     return p;
 }
 

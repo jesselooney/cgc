@@ -43,11 +43,12 @@ void arc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void(*f)(void *)))
 {
     _arc_header_t *header = malloc(size + sizeof(_arc_header_t));
-
+    
     header->ref_count = 1;
     header->map_ptrs = map_ptrs;
-
+    
     *p = (void *) (header + 1);
+    log_trace("a %p", *p);
 }
 
 void arc_assign(void **p, void *q)
@@ -64,14 +65,14 @@ void arc_assign(void **p, void *q)
 
 void arc_register(void *p)
 {
-    log_trace("arc_register(%p)", p);
+    log_info("arc_register(%p)", p);
     if (_arc_is_heap_ptr(p))
         _arc_inc(p);
 }
 
 void arc_deregister(void *p)
 {
-    log_trace("arc_deregister(%p)", p);
+    log_info("arc_deregister(%p)", p);
     if (_arc_is_heap_ptr(p))
         _arc_dec(p);
 }
@@ -106,6 +107,7 @@ static void _arc_dec(void *p)
     if (header->ref_count <= 0) {
         if (header->map_ptrs != NULL)
             (*header->map_ptrs) (p, arc_deregister);
+        log_trace("f %p", p);
         free(header);
     }
 }
