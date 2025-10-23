@@ -33,8 +33,7 @@ int main()
     c->head = 2;
     c->tail = NULL;
 
-    cgc_assign(&a->tail, b);
-    cgc_assign(&b->tail, c);
+    cgc_assign(&a->tail, c);
 
     cgc_scope_end();
 

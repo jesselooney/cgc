@@ -12,7 +12,7 @@ if not GOLDENS_DIR.is_dir():
 
 # TODO: Maybe clean NEW_GOLDENS_DIR?
 
-# TODO: Generate the new goldens.
+subprocess.run(["make", f"GOLD_OUT={str(NEW_GOLDENS_DIR)}", "gold_generate"])
 
 test_count = 0
 success_count = 0

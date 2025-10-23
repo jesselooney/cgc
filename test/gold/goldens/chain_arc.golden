@@ -1,7 +1,7 @@
 [TRACE] a < A >
 [TRACE] a < B >
 [TRACE] a < C >
-[TRACE] f < C >
 [TRACE] f < B >
+[TRACE] f < C >
 [TRACE] f < A >
 

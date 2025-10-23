@@ -4,7 +4,7 @@ import re
 ptrs = {}
 normalized = ""
 while (l := sys.stdin.readline()):
-    ptrs = ptrs | dict.fromkeys(re.findall("0x[\w\d]+", l))
+    ptrs = ptrs | dict.fromkeys(re.findall(r"0x[\w\d]+", l))
     normalized += l
 
 alpha = False if len(ptrs) > 26 else True 
