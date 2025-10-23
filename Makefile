@@ -46,28 +46,34 @@ format:
 
 GOLD_CFLAGS += -I $(INCLUDE)
 GOLD_CFLAGS += -Wno-incompatible-pointer-types
-GOLD_CFLAGS += -DVERBOSITY=5
+GOLD_CFLAGS += -DVERBOSITY=3
 
 GOLD_ROOT = test/gold
 GOLD_SRC = $(GOLD_ROOT)/src
-GOLD_OBJ = $(GOLD_ROOT)/obj
 GOLD_BIN = $(GOLD_ROOT)/bin
 
 GOLD_SOURCES := $(wildcard $(GOLD_SRC)/*.c)
 GOLD_OBJECTS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_OBJ)/%.o)
-GOLD_TARGETS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%)
+GOLD_TARGETS_ARC := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%_arc)
+GOLD_TARGETS = $(GOLD_TARGETS_ARC) # $(GOLD_TARGETS_TRC)
 
-$(GOLD_TARGETS) : $(GOLD_SOURCES) $(HEADERS)
+GOLD_GOLDENS_OUTDIR := $(GOLD_ROOT)/goldens
+ifdef GOLD_OUT
+	GOLD_GOLDENS_OUTDIR := $(GOLD_OUT)
+endif
+GOLD_GOLDENS_TARGETS := $(GOLD_TARGETS:$(GOLD_BIN)/%=$(GOLD_GOLDENS_OUTDIR)/%.golden)
+
+$(GOLD_TARGETS_ARC) : $(GOLD_BIN)/%_arc:$(GOLD_SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
-	$(CC) $(GOLD_CFLAGS) $< -o $@
+	$(CC) $(GOLD_CFLAGS) -DGC_ARC $< -o $@
 
 gold : $(GOLD_TARGETS)
 
 gold_clean :
-	rm -r $(GOLD_OBJ) $(GOLD_BIN)
+	rm -rf $(GOLD_BIN)
 
-#gold_generate
+$(GOLD_GOLDENS_TARGETS) : $(GOLD_GOLDENS_OUTDIR)/%.golden:$(GOLD_BIN)/% 
+	@mkdir -p $(@D)
+	$< | python3 script/normalize.py > $@
 
-#gold_run
-
-
+gold_generate : $(GOLD_GOLDENS_TARGETS)

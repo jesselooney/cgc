@@ -1,18 +1,17 @@
 import sys
 import re
 
-id = 0
 ptrs = {}
 normalized = ""
 while (l := sys.stdin.readline()):
-    matches = set(re.findall("0x[\w\d]+", l))
-    for match in matches:
-        if match not in ptrs:
-            ptrs[match] = id
-            id += 1
-    out = l
-    for match in matches:
-        out = re.sub(match, f"{ptrs[match]}", out)
-    normalized += out
+    ptrs = ptrs | dict.fromkeys(re.findall("0x[\w\d]+", l))
+    normalized += l
+
+alpha = False if len(ptrs) > 26 else True 
+id = 'A' if alpha else 0
+
+for p in ptrs:
+    normalized = re.sub(p, f"< {id} >", normalized)
+    id = chr(ord(id) + 1) if alpha else id + 1
 
 print(normalized)
