@@ -17,6 +17,7 @@
 
 #ifdef GC_TRC
 // death and dying
+exit(1);
 #endif
 
 #include "arc.h"

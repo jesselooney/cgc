@@ -18,7 +18,7 @@
 
 typedef struct {
     size_t block_size;
-    silly_t bitmaps;
+    void* bitmaps; // help
 } _trc_header_t;
 
 void *HEAP_START = NULL;
