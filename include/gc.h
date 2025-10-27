@@ -15,6 +15,10 @@
 // ==============================================
 #ifdef GC_ARC
 
+#ifdef GC_TRC
+// death and dying
+#endif
+
 #include "arc.h"
 #define gc_register(P) arc_register(P)
 #define gc_alloc(P, T) arc_alloc(P, sizeof(T), T ## __map_ptrs)
@@ -27,7 +31,13 @@
 // TRC
 // ==============================================
 #ifdef GC_TRC
-    // TODO: Prevent specifying more than one of GC_ARC and GC_TRC
+
+#include "trc.h"
+#define gc_register(P) 
+#define gc_alloc(P, T) trc_alloc(P, sizeof(T), T ## __map_ptrs)
+#define gc_assign(P, Q) ((*P) = (Q))
+#define gc_deregister(P)
+
 #endif
 
 #endif

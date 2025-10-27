@@ -13,6 +13,15 @@
 #define cgc_scope_declare(T, N) T N; ptr_stack_push(&N);
 #define cgc_scope_end() ptr_stack_scope_end()
 
-#define cgc_init() ptr_stack_init()
+#define cgc_init() _cgc_init()
 
 #endif
+
+
+static void _cgc_init()
+{
+    ptr_stack_init();
+    #ifdef GC_TRC
+        trc_init();
+    #endif
+}
