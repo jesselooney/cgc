@@ -137,12 +137,7 @@ void _trc_sweep()
         }
     }
     // in 0x10000 steps,
-    while ((curr_pool += ALLOC_POOL_SIZE) < ALLOC_HEAP_TOP)
-}
-
-static _trc_header_t *_trc_get_header_ptr(void *p)
-{
-    return (_trc_header_t *) (((uintptr_t) p) >> ALLOC_POOL_SIZE_EXP ) << ALLOC_POOL_SIZE_EXP;
+    while ((curr_pool += ALLOC_POOL_SIZE) < ALLOC_HEAP_TOP);
 }
 
 static bool _trc_is_heap_ptr(void *p)
