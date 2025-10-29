@@ -78,5 +78,5 @@ $(GOLD_GOLDENS_TARGETS) : $(GOLD_GOLDENS_OUTDIR)/%.golden:$(GOLD_BIN)/%
 
 gold_generate : $(GOLD_GOLDENS_TARGETS)
 
-gold_test:
+gold_test : $(GOLD_TARGETS)
 	@python3 script/test_gold.py
