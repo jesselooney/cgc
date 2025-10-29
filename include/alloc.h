@@ -3,6 +3,7 @@
 
 #include <sys/mman.h>
 #include <stddef.h>
+#include <stdint.h>
 
 //===============================================
 // Members
@@ -23,14 +24,13 @@ void alloc_set_mark_bit(void *block);
 static void *ALLOC_HEAP_START = NULL;
 static void *ALLOC_HEAP_TOP = NULL;
 
-static ALLOC_HEAP_SIZE_EXP = 30;
-static ALLOC_HEAP_SIZE = 1 << ALLOC_HEAP_SIZE_EXP;
-static ALLOC_POOL_SIZE_EXP = 16;
-static ALLOC_POOL_SIZE = 1 << ALLOC_POOL_SIZE_EXP;
-static ALLOC_MIN_BLOCK_COUNT_EXP = 3;
-static ALLOC_MAX_BLOCK_COUNT_EXP = 6;
-
-static ALLOC_MAX_BLOCK_SIZE_EXP = ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP;
+#define ALLOC_HEAP_SIZE_EXP 30
+#define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
+#define ALLOC_POOL_SIZE_EXP 16
+#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
+#define ALLOC_MIN_BLOCK_COUNT_EXP 3
+#define ALLOC_MAX_BLOCK_COUNT_EXP 6
+#define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
 
 // // for a given block_size_exp:
 // bitvec_size_exp = alloc_pool_size_exp - 3 - block_size_exp;
@@ -46,7 +46,7 @@ static ALLOC_MAX_BLOCK_SIZE_EXP = ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EX
 // }
 //
 
-#define BITVEC_SIZE(block_size) (alloc_pool_size / block_size / 8)
+#define BITVEC_SIZE(block_size) (ALLOC_POOL_SIZE / block_size / 8)
 #define HEADER_SIZE(block_size) (sizeof(size_t) + 2 * bitvec_size(block_size))
 #define BLOCKS_PER_HEADER(block_size) ((header_size(block_size) + block_size - 1) / block_size)
 
@@ -60,7 +60,7 @@ static ALLOC_MAX_BLOCK_SIZE_EXP = ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EX
 // block is theoretically the pointer to the start of a heap allocated block, but it 
 // could point inside of one and the rounding should work out, probably.
 void alloc_set_mark_bit(void *block) {
-    pool_t *pool = GET_POOL(block);
+    pool_t *pool = (pool_t *) (GET_POOL((intptr_t) block));
     size_t block_id = BLOCK_ID(pool, block);
     uint8_t *resident_byte = &pool->data[BITVEC_SIZE(pool->block_size) + block_id / 8];
     SET_BIT(resident_byte, block_id % 8);
@@ -69,15 +69,13 @@ void alloc_set_mark_bit(void *block) {
 
 typedef struct {
     size_t block_size;
-    uint8_t[alloc_pool_size - sizeof(size_t)] data;
+    uint8_t[ALLOC_POOL_SIZE - sizeof(size_t)] data;
 } pool_t;
 
 void alloc_init() {
     void *ptr = mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
-
-   ALLOC_HEAP_START = ptr + (ptr % alloc_pool_size);
-
-   ALLOC_HEAP_TOP = ALLOC_HEAP_START;
+    ALLOC_HEAP_START = ptr + (ptr % alloc_pool_size);
+    ALLOC_HEAP_TOP = ALLOC_HEAP_START;
 }
 
 // Return value of NULL indicates failure

@@ -6,9 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
-
 #include "debug.h"
-//#include "alloc.h"
+#include "alloc.h"
 #include "ptr_stack.h"
 #include "stack.h"
 
@@ -19,8 +18,6 @@
 typedef struct {
     void (*map_ptrs)(void *, void(*f)(void *));
 } _trc_header_t;
-
-void *HEAP_START = NULL;
 
 stack_t *SEARCH_STACK = NULL;
 
@@ -45,7 +42,7 @@ static bool _trc_is_heap_ptr(void *p);
 
 void trc_init() 
 {
-    HEAP_START = alloc_init();
+    alloc_init();
 }
 
 void trc_alloc(void **p, size_t size,
@@ -75,7 +72,7 @@ void _trc_collect()
 void _trc_mark() 
 {
     // prepare dfs stack 
-    SEARCH_STACK = stack_init();
+    SEARCH_STACK = stack_init(PTR_STACK->top);
 
     // initialize dfs stack with root set
     void **item;
@@ -132,7 +129,7 @@ void _trc_sweep()
             uint8_t to_free = (~ free_vec) & (~ mark_vec);
             for (int j = 0; j < 8; j++) 
             {
-                if (GET_BIT(to_free))
+                if (GET_BIT(to_free, j))
                 {
                     alloc_del_by_id(curr_pool, i*8 + j);
                 }
