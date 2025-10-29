@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include "debug.h"
-#include "alloc.h"
+//#include "alloc.h"
 #include "ptr_stack.h"
 #include "stack.h"
 
@@ -17,11 +17,12 @@
 // ==============================================
 
 typedef struct {
-    size_t block_size;
-    void* bitmaps; // help
+    void (*map_ptrs)(void *, void(*f)(void *));
 } _trc_header_t;
 
 void *HEAP_START = NULL;
+
+stack_t *SEARCH_STACK = NULL;
 
 void trc_init();
 
@@ -50,17 +51,17 @@ void trc_init()
 void trc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void(*f)(void *)))
 {
-    void* space = alloc_new(size + sizeof(intptr_t));
-    if (space == NULL) {
+    _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
+    if (header == NULL) {
         _trc_collect();
-        space = alloc_new(size + sizeof(intptr_t));
-        if (space == NULL) {
+        header = alloc_new(size + sizeof(intptr_t));
+        if (header == NULL) {
             // kill and death
             exit(1);
         }
     }
-    *space = map_ptrs; // this looks wrong
-    *p = space + sizeof(intptr_t);
+    header->map_ptrs = map_ptrs;
+    *p = header + sizeof(intptr_t);
     log_trace("a %p", *p);
 }
 
@@ -70,12 +71,11 @@ void _trc_collect()
     _trc_sweep();
 }
 
-// sfrom the root set, dfs using destructors 
+// from the root set, dfs using map_ptrs 
 void _trc_mark() 
 {
     // prepare dfs stack 
-    stack_t *to_visit;
-    to_visit = stack_init();
+    SEARCH_STACK = stack_init();
 
     // initialize dfs stack with root set
     void **item;
@@ -83,43 +83,69 @@ void _trc_mark()
     for (int i = 0; i < stack_top; i++)
     {
         item = (PTR_STACK->items)[i];
+        // ignore sentinels
         if (_trc_is_heap_ptr(item))
         {
-            // ignore sentinels
-            stack_push(to_visit, item);
+            stack_push(SEARCH_STACK, item);
         }
     }
 
-    // perform dfs on this stack
     void **visiting;
-    while ((visiting = stack_pop(to_visit)) != NULL)
+    size_t pool_block_size;
+    void (*map_ptrs)(void *, void (void *));
+    // perform dfs on this stack
+    while (SEARCH_STACK->top > 0)
     {
-        // when you visit an allocation
-        //      calculate block number based on 0x10000 distance
-        //      flip marked bit in the marked bit vector
-        // after dfs, zero out the marked bit vector
+        // get the next pointer to a heap pointer on the stack
+        visiting = stack_pop(SEARCH_STACK);
+
+        // set the corresponding mark bit for this block in that 
+        alloc_set_mark_bit(*visiting); // TODO: err rounding? maybe an issue in BLOCK_ID
+
+        // put its pointers on the stack
+        map_ptrs = (void (*)(void *, void (void *))) (*visiting - sizeof(intptr_t));
+        map_ptrs(*visiting, _trc_putthingonstack);
     }
+}
+
+void _trc_putthingonstack(void *p)
+{
+    stack_push(SEARCH_STACK, (void **) p);
 }
 
 void _trc_sweep() 
 {
-    // retrieve top of heap from the allocator
-    // in 0x10000 steps,
-    // read the size of the blocks
-    // calculate bit vector sizes
-    // load each bit vector in
-    // ~ both then & 
-    // any 1's correspond to blocks to free
-    // iterate through each; free and link back to the free list
+    // retrieve start of heap from the allocator
+    pool_t *curr_pool = ALLOC_HEAP_START;
+    do
+    {
+        // read the size of the blocks
+        // load each bit vector in
+        // ~ both then & 
+        // any 1's correspond to blocks to free
+        // iterate through each; free and link back to the free list
 
-    // need access to:
-    //  top of the heap from the allocator
-    //  pointer to the top-level size class list
+        for (int i = 0; i < BITVEC_SIZE(curr_pool->block_size); i++) 
+        {
+            uint8_t free_vec = curr_pool->data[i];
+            uint8_t mark_vec = curr_pool->data[i];
+            uint8_t to_free = (~ free_vec) & (~ mark_vec);
+            for (int j = 0; j < 8; j++) 
+            {
+                if (GET_BIT(to_free))
+                {
+                    alloc_del_by_id(curr_pool, i*8 + j);
+                }
+            }
+        }
+    }
+    // in 0x10000 steps,
+    while ((curr_pool += ALLOC_POOL_SIZE) < ALLOC_HEAP_TOP)
 }
 
 static _trc_header_t *_trc_get_header_ptr(void *p)
 {
-    return (_trc_header_t *) (((uintptr_t) p) >> 16 ) << 16;
+    return (_trc_header_t *) (((uintptr_t) p) >> ALLOC_POOL_SIZE_EXP ) << ALLOC_POOL_SIZE_EXP;
 }
 
 static bool _trc_is_heap_ptr(void *p)
