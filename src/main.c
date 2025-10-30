@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define GC_ARC
+#define GC_TRC
 
 #include "cgc.h"
 #include "debug.h"

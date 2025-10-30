@@ -36,6 +36,8 @@ static _trc_header_t *_trc_get_header_ptr(void *p);
 
 static bool _trc_is_heap_ptr(void *p);
 
+static void _trc_push_to_search_stack(void *p);
+
 // ==============================================
 // Definitions
 // ==============================================
@@ -101,11 +103,11 @@ void _trc_mark()
 
         // put its pointers on the stack
         map_ptrs = (void (*)(void *, void (void *))) (*visiting - sizeof(intptr_t));
-        map_ptrs(*visiting, _trc_putthingonstack);
+        map_ptrs(*visiting, _trc_push_to_search_stack);
     }
 }
 
-void _trc_putthingonstack(void *p)
+static void _trc_push_to_search_stack(void *p)
 {
     stack_push(SEARCH_STACK, (void **) p);
 }
@@ -113,7 +115,7 @@ void _trc_putthingonstack(void *p)
 void _trc_sweep() 
 {
     // retrieve start of heap from the allocator
-    pool_t *curr_pool = ALLOC_HEAP_START;
+    void *curr_pool = ALLOC_HEAP_START;
     do
     {
         // read the size of the blocks
@@ -122,16 +124,17 @@ void _trc_sweep()
         // any 1's correspond to blocks to free
         // iterate through each; free and link back to the free list
 
-        for (int i = 0; i < BITVEC_SIZE(curr_pool->block_size); i++) 
+        pool_t *pool = curr_pool;
+        for (int i = 0; i < BITVEC_SIZE(pool->block_size); i++) 
         {
-            uint8_t free_vec = curr_pool->data[i];
-            uint8_t mark_vec = curr_pool->data[i];
+            uint8_t free_vec = pool->data[i];
+            uint8_t mark_vec = pool->data[i];
             uint8_t to_free = (~ free_vec) & (~ mark_vec);
             for (int j = 0; j < 8; j++) 
             {
                 if (GET_BIT(to_free, j))
                 {
-                    alloc_del_by_id(curr_pool, i*8 + j);
+                    alloc_del_by_id(pool, i*8 + j);
                 }
             }
         }

@@ -10,7 +10,13 @@
 // Members
 //===============================================
 
-//#define ALLOC_HEAP_SIZE
+#define ALLOC_POOL_SIZE_EXP 16
+#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
+
+typedef struct {
+    size_t block_size;
+    uint8_t data[ALLOC_POOL_SIZE - sizeof(size_t)];
+} pool_t;
 
 void alloc_init();
 void* alloc_new(size_t size);
@@ -27,8 +33,6 @@ static void *ALLOC_HEAP_TOP = NULL;
 
 #define ALLOC_HEAP_SIZE_EXP 30
 #define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
-#define ALLOC_POOL_SIZE_EXP 16
-#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
 #define ALLOC_MIN_BLOCK_COUNT_EXP 3
 #define ALLOC_MAX_BLOCK_COUNT_EXP 6
 #define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
@@ -44,10 +48,6 @@ static void *ALLOC_HEAP_TOP = NULL;
 #define GET_BIT(BYTE, I) ((BYTE >> I) & 1)
 #define SET_BIT(BYTE_PTR, I) (*BYTE_PTR |= 1 << I)
 
-typedef struct {
-    size_t block_size;
-    uint8_t data[ALLOC_POOL_SIZE - sizeof(size_t)];
-} pool_t;
 
 // block is theoretically the pointer to the start of a heap allocated block, but it 
 // could point inside of one and the rounding should work out, probably.
@@ -59,7 +59,7 @@ void alloc_set_mark_bit(void *block) {
 }
 
 void alloc_init() {
-    intptr_t ptr = mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
+    intptr_t ptr = (intptr_t) mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
     ALLOC_HEAP_START = (void *) (ptr + (ptr % ALLOC_POOL_SIZE));
     ALLOC_HEAP_TOP = ALLOC_HEAP_START;
 }
