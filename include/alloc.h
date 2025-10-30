@@ -24,6 +24,7 @@ void alloc_del(void *ptr);
 void alloc_del_by_id(pool_t *pool, size_t block_id);
 void alloc_set_mark_bit(void *block);
 
+static void _alloc_set_free_bit(void *block);
 static int _alloc_log_2_ceil(size_t size);
 
 //===============================================
@@ -54,24 +55,44 @@ static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = {NULL};
 #define SET_BIT(BYTE_PTR, INDEX) (*BYTE_PTR |= 1 << INDEX)
 
 
-// block is theoretically the pointer to the start of a heap allocated block, but it 
-// could point inside of one and the rounding should work out, probably.
+
+// alloc_set_mark_bit(void*)
+//      we have found an object that has a live pointer to it. pass that pointer to the object 
+//      to set its mark bit in the bitmap
 void alloc_set_mark_bit(void *block) {
+    // block is theoretically the pointer to the start of a heap allocated block, but it 
+    // could point inside of one and the rounding should work out, probably.
     pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
     size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
     uint8_t *resident_byte = &pool->data[BITVEC_SIZE(pool->block_size) + block_id / 8];
     SET_BIT(resident_byte, block_id % 8);
 }
 
+// alloc_set_free_bit(void*)
+static void _alloc_set_free_bit(void *block) {
+    // block is theoretically the pointer to the start of a heap allocated block, but it 
+    // could point inside of one and the rounding should work out, probably.
+    pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
+    size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
+    uint8_t *resident_byte = &pool->data[block_id / 8];
+    SET_BIT(resident_byte, block_id % 8);
+}
+
+//  alloc_init()
+//      initialize a giant slab of memory for us to parse up. start the heap at the first 
+//      pool aligned address and bump the top up from there
 void alloc_init() {
     intptr_t ptr = (intptr_t) mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS, -1, 0);
     ALLOC_HEAP_START = (void *) (ptr + (ptr % ALLOC_POOL_SIZE));
     ALLOC_HEAP_TOP = ALLOC_HEAP_START;
 }
 
-// Return value of NULL indicates failure
-// Returns a block that is the head of the linked list of blocks in
-// this pool.
+//  alloc_new_pool(size_t)
+//      if the ll of blocks in a size class is empty, we need to initialize a new set of 
+//      blocks in a new pool. 
+//      return NULL if no pool could be allocated
+//      return a pointer to the block at the head of the linked list of blocks on success
+
 // TODO: note constraints on allowed values of block_size
 void *alloc_new_pool(size_t block_size) {
     if (ALLOC_HEAP_TOP + ALLOC_POOL_SIZE > ALLOC_HEAP_START + ALLOC_HEAP_SIZE)
@@ -110,6 +131,8 @@ typedef struct {
     int exp;
     int pow; // 2^exp
 } _log2_ceil_return_t;
+
+
 static _log2_ceil_return_t _alloc_log2_ceil(size_t size) {
     int exp = 0;
     int pow = 1;
@@ -125,25 +148,44 @@ static _log2_ceil_return_t _alloc_log2_ceil(size_t size) {
     return ret;
 }
 
+//  alloc_new(size_t)
+//      allocate memory
+//      rounded up to occupy a block of the next power of 2 size
 void* alloc_new(size_t size) {
     _log2_ceil_return_t log2_ceil = _alloc_log2_ceil(size);
     int index = log2_ceil.exp;
     int block_size = log2_ceil.pow;
 
+    // if smaller than smallest block, over-allocate in the smallest block size
     if (index < ALLOC_MIN_BLOCK_SIZE_EXP) index = ALLOC_MIN_BLOCK_SIZE_EXP;
+
     // Fail if requested size is larger than the largest size class.
-    // TODO: Add large object handling.
-    if (index > ALLOC_MAX_BLOCK_SIZE_EXP) return NULL;
+    if (index > ALLOC_MAX_BLOCK_SIZE_EXP) {
+        // TODO: Add large object handling. 
+        return NULL;
+    }
 
     // Get the next item of the free list for this size class.
     void *ptr = ALLOC_FREE_LISTS[index];
-    if (ptr != NULL) {
-        // TODO: un-free the block pointed to by ptr and update the free list.
-    } else {
+    if (ptr == NULL) {
         void *head_block = alloc_new_pool(block_size);
         if (head_block == NULL) return NULL; // Failed to allocate the pool.
         ALLOC_FREE_LISTS[index] = head_block;
+        ptr = head_block;
     }
+    // now, know for sure that there is a block ready for this size class that ptr looks at
+    
+    // TODO: this totally isn't right is it, want this interface to be able to
+    // toggle not just set
+    // either way, need to indicate that the block we grab is no longer free
+    alloc_set_free_bit(ptr);
+    
+    // find the prev of this block
+    void *prev = *((void**) ptr);
+    // move the free lists pointer to grab the top block
+    ALLOC_FREE_LISTS[index] = prev;
+    // return the block we just grabbed
+    return ptr;
 }
 
 #endif
