@@ -60,7 +60,7 @@ void trc_alloc(void **p, size_t size,
         }
     }
     header->map_ptrs = map_ptrs;
-    *p = header + sizeof(intptr_t);
+    *p = header + 1;
     log_trace("a %p", *p);
 }
 
@@ -73,7 +73,7 @@ void trc_collect()
 // from the root set, dfs using map_ptrs 
 void _trc_mark()
 {
-    log_info("beginning mark");
+    log_info("_trc_mark()");
 
     log_debug("pushing root set onto search stack");
     // prepare dfs stack 
@@ -117,7 +117,7 @@ static void _trc_push_to_search_stack(void *p)
 
 void _trc_sweep()
 {
-    log_info("beginning sweep");
+    log_info("_trc_sweep()");
     // retrieve start of heap from the allocator
     void *curr_pool = ALLOC_HEAP_START;
     do {
@@ -128,13 +128,16 @@ void _trc_sweep()
         // iterate through each; free and link back to the free list
 
         pool_t *pool = curr_pool;
+        log_debug("in pool beginning at %p", pool);
+        // bitvec_size is the # of uint8_t's to iterate over for one of the bitvectors
         for (int i = 0; i < BITVEC_SIZE(pool->block_size); i++) {
             uint8_t free_vec = pool->data[i];
-            uint8_t mark_vec = pool->data[i];
+            uint8_t mark_vec = pool->data[BITVEC_SIZE(pool->block_size) + i];
             uint8_t to_free = (~free_vec) & (~mark_vec);
             for (int j = 0; j < 8; j++) {
                 if (GET_BIT(to_free, j)) {
                     alloc_del_by_id(pool, i * 8 + j);
+                    log_trace("f %p", ((_trc_header_t*) (GET_BLOCK(pool, i*8 + j))) + 1);
                 }
             }
         }

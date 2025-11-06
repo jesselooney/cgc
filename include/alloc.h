@@ -55,12 +55,12 @@ static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
 
 #define BITVEC_SIZE(block_size) (ALLOC_POOL_SIZE / block_size / 8)
 #define HEADER_SIZE(block_size) (sizeof(size_t) + 2 * BITVEC_SIZE(block_size))
-#define BLOCKS_PER_HEADER(block_size) ((HEADER_SIZE(block_size) + block_size - 1) / block_size)
+#define BLOCKS_PER_HEADER(block_size) ((HEADER_SIZE(block_size) + (block_size) - 1) / (block_size))
 
 // TODO: Use a mask instead of shifting for GET_POOL.
-#define GET_POOL(BLOCK) ((BLOCK >> ALLOC_POOL_SIZE_EXP) << ALLOC_POOL_SIZE_EXP)
-#define BLOCK_ID(POOL, BLOCK) ((BLOCK - POOL) / POOL->block_size)
-#define GET_BLOCK(POOL, BLOCK_ID) (((void*) POOL) + (BLOCK_ID * POOL->block_size))
+#define GET_POOL(BLOCK) (((BLOCK) >> ALLOC_POOL_SIZE_EXP) << ALLOC_POOL_SIZE_EXP)
+#define BLOCK_ID(POOL, BLOCK) (((BLOCK) - (POOL)) / POOL->block_size)
+#define GET_BLOCK(POOL, BLOCK_ID) (((void*) (POOL)) + ((BLOCK_ID) * POOL->block_size))
 
 #define GET_BIT(BYTE, INDEX) ((BYTE >> INDEX) & 1)
 #define SET_BIT(BYTE_PTR, INDEX) (*BYTE_PTR |= 1 << INDEX)
@@ -144,6 +144,7 @@ void *alloc_new(size_t size)
 
 void alloc_del_by_id(pool_t *pool, size_t block_id)
 {
+    log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
     void *block = GET_BLOCK(pool, block_id);
     _alloc_set_free_bit_by_id(pool, block_id);
 
