@@ -35,7 +35,7 @@ typedef struct {
     int pow;                    // 2^exp
 } _log2_ceil_return_t;
 
-static _log2_ceil_return_t _alloc_log_2_ceil(size_t size);
+static _log2_ceil_return_t _alloc_log2_ceil(size_t size);
 
 //===============================================
 // Definitions
@@ -98,7 +98,7 @@ void *alloc_new(size_t size)
 
     // If there is no next block, create one by allocating a pool.
     if (block == NULL) {
-        void *head_block = alloc_new_pool(block_size);
+        void *head_block = _alloc_new_pool(block_size);
         if (head_block == NULL)
             return NULL;        // Failed to allocate the pool.
         block = head_block;
