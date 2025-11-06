@@ -16,7 +16,7 @@
 // ==============================================
 
 typedef struct {
-    void (*map_ptrs)(void *, void(*f)(void *));
+    void (*map_ptrs)(void *, void (*f)(void *));
 } _trc_header_t;
 
 stack_t *SEARCH_STACK = NULL;
@@ -24,7 +24,7 @@ stack_t *SEARCH_STACK = NULL;
 void trc_init();
 
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)));
+               void (*map_ptrs)(void *, void (*f)(void *)));
 
 static void _trc_collect();
 
@@ -48,7 +48,7 @@ void trc_init()
 }
 
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)))
+               void (*map_ptrs)(void *, void (*f)(void *)))
 {
     _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
     if (header == NULL) {
@@ -89,7 +89,7 @@ void _trc_mark()
 
     void **visiting;
     size_t pool_block_size;
-    void (*map_ptrs)(void *, void (void *));
+    void (*map_ptrs)(void *, void(void *));
     // perform dfs on this stack
     while (SEARCH_STACK->top > 0) {
         // get the next pointer to a heap pointer on the stack
