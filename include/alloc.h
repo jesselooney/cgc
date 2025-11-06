@@ -25,6 +25,7 @@ void alloc_del_by_id(pool_t *pool, size_t block_id);
 void alloc_set_mark_bit(void *block);
 
 static void _alloc_set_free_bit(void *block);
+static void _alloc_clear_free_bit(void *block);
 static int _alloc_log_2_ceil(size_t size);
 
 //===============================================
@@ -50,11 +51,11 @@ static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = {NULL};
 // TODO: Use a mask.
 #define GET_POOL(BLOCK) ((BLOCK >> ALLOC_POOL_SIZE_EXP) << ALLOC_POOL_SIZE_EXP)
 #define BLOCK_ID(POOL, BLOCK) ((BLOCK - POOL) / POOL->block_size)
+#define GET_BLOCK(POOL, BLOCK_ID) (((void*) POOL) + (BLOCK_ID * POOL->block_size))
 
 #define GET_BIT(BYTE, INDEX) ((BYTE >> INDEX) & 1)
 #define SET_BIT(BYTE_PTR, INDEX) (*BYTE_PTR |= 1 << INDEX)
-
-
+#define CLEAR_BIT(BYTE_PTR, INDEX) (*BYTE_PTR &= ~(1 << INDEX))
 
 // alloc_set_mark_bit(void*)
 //      we have found an object that has a live pointer to it. pass that pointer to the object 
@@ -64,19 +65,22 @@ void alloc_set_mark_bit(void *block) {
     // could point inside of one and the rounding should work out, probably.
     pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
     size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
-    uint8_t *resident_byte = &pool->data[BITVEC_SIZE(pool->block_size) + block_id / 8];
+    uint8_t *resident_byte = &pool->data[BITVEC_SIZE(pool->block_size) + (block_id / 8)];
     SET_BIT(resident_byte, block_id % 8);
 }
 
-// alloc_set_free_bit(void*)
-static void _alloc_set_free_bit(void *block) {
-    // block is theoretically the pointer to the start of a heap allocated block, but it 
-    // could point inside of one and the rounding should work out, probably.
-    pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
-    size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
+static void _alloc_set_free_bit_by_id(pool_t *pool, size_t block_id) {
     uint8_t *resident_byte = &pool->data[block_id / 8];
     SET_BIT(resident_byte, block_id % 8);
 }
+
+static void _alloc_clear_free_bit(void *block) {
+    pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
+    size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
+    uint8_t *resident_byte = &pool->data[block_id / 8];
+    CLEAR_BIT(resident_byte, block_id % 8);
+}
+
 
 //  alloc_init()
 //      initialize a giant slab of memory for us to parse up. start the heap at the first 
@@ -92,8 +96,6 @@ void alloc_init() {
 //      blocks in a new pool. 
 //      return NULL if no pool could be allocated
 //      return a pointer to the block at the head of the linked list of blocks on success
-
-// TODO: note constraints on allowed values of block_size
 void *alloc_new_pool(size_t block_size) {
     if (ALLOC_HEAP_TOP + ALLOC_POOL_SIZE > ALLOC_HEAP_START + ALLOC_HEAP_SIZE)
         return NULL;
@@ -108,9 +110,6 @@ void *alloc_new_pool(size_t block_size) {
     memset(pool->data, ~0, BITVEC_SIZE(block_size));
 
     void *pool_start = pool;
-    // TODO: initialize prev to the address of the front of the free list for this size
-    // class. Maybe not necessary since we only allocate when there are no other blocks,
-    // but worth considering.
     void *prev = NULL;
     void *block = pool_start + block_size;
     for (; block < pool_start + ALLOC_POOL_SIZE; block += block_size) {
@@ -165,27 +164,41 @@ void* alloc_new(size_t size) {
         return NULL;
     }
 
-    // Get the next item of the free list for this size class.
-    void *ptr = ALLOC_FREE_LISTS[index];
-    if (ptr == NULL) {
+    // Get the next block in the free list for this size class.
+    void *block = ALLOC_FREE_LISTS[index];
+
+    // If there is no next block, create one by allocating a pool.
+    if (block == NULL) {
         void *head_block = alloc_new_pool(block_size);
         if (head_block == NULL) return NULL; // Failed to allocate the pool.
-        ALLOC_FREE_LISTS[index] = head_block;
-        ptr = head_block;
+        block = head_block;
     }
-    // now, know for sure that there is a block ready for this size class that ptr looks at
     
-    // TODO: this totally isn't right is it, want this interface to be able to
-    // toggle not just set
-    // either way, need to indicate that the block we grab is no longer free
-    alloc_set_free_bit(ptr);
-    
-    // find the prev of this block
-    void *prev = *((void**) ptr);
-    // move the free lists pointer to grab the top block
-    ALLOC_FREE_LISTS[index] = prev;
-    // return the block we just grabbed
-    return ptr;
+    // Pull `block` off the free list.
+    void *next_block = *((void**) block); 
+    ALLOC_FREE_LISTS[index] = next_block;
+
+    // Null out `block`'s pointer into the free list so we don't give the user
+    // easy access to the free list.
+    *((void **) block) = NULL;
+
+    // Mark `block` as occupied before returning it to the user.
+    _alloc_clear_free_bit(block);
+
+    return block;
+}
+
+void alloc_del_by_id(pool_t* pool, size_t block_id) {
+    void *block = GET_BLOCK(pool, block_id);
+    _alloc_set_free_bit_by_id(pool, block_id);
+
+    // Get the index of the free list `block` belongs in.
+    _log2_ceil_return_t log2_ceil = _alloc_log2_ceil(pool->block_size);
+    int index = log2_ceil.exp;
+
+    // Insert `block` at the front of the correct free list.
+    *((void **) block) = ALLOC_FREE_LISTS[index];
+    ALLOC_FREE_LISTS[index] = block;
 }
 
 #endif
