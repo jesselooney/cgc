@@ -14,6 +14,7 @@
 #define cgc_scope_end() ptr_stack_scope_end()
 
 #define cgc_init() _cgc_init()
+#define cgc_collect() _cgc_collect()
 
 #endif
 
@@ -24,4 +25,12 @@ static void _cgc_init()
 #ifdef GC_TRC
     trc_init();
 #endif
+}
+
+
+static void _cgc_collect()
+{
+    #ifdef GC_TRC
+    trc_collect();
+    #endif
 }

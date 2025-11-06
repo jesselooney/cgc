@@ -44,5 +44,7 @@ int main()
 
     cgc_scope_end();
 
+    cgc_collect();
+
     return 0;
 }

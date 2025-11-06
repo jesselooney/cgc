@@ -26,7 +26,7 @@ void trc_init();
 void trc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void (*f)(void *)));
 
-static void _trc_collect();
+void trc_collect();
 
 static void _trc_mark();
 
@@ -52,7 +52,7 @@ void trc_alloc(void **p, size_t size,
 {
     _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
     if (header == NULL) {
-        _trc_collect();
+        trc_collect();
         header = alloc_new(size + sizeof(intptr_t));
         if (header == NULL) {
             // kill and death
@@ -64,7 +64,7 @@ void trc_alloc(void **p, size_t size,
     log_trace("a %p", *p);
 }
 
-void _trc_collect()
+void trc_collect()
 {
     _trc_mark();
     _trc_sweep();
@@ -73,6 +73,9 @@ void _trc_collect()
 // from the root set, dfs using map_ptrs 
 void _trc_mark()
 {
+    log_info("beginning mark");
+
+    log_debug("pushing root set onto search stack");
     // prepare dfs stack 
     SEARCH_STACK = stack_init(PTR_STACK->top);
 
@@ -83,6 +86,7 @@ void _trc_mark()
         item = (PTR_STACK->items)[i];
         // ignore sentinels
         if (_trc_is_heap_ptr(item)) {
+            log_debug("pushing pointer %p", item);
             stack_push(SEARCH_STACK, item);
         }
     }
@@ -113,6 +117,7 @@ static void _trc_push_to_search_stack(void *p)
 
 void _trc_sweep()
 {
+    log_info("beginning sweep");
     // retrieve start of heap from the allocator
     void *curr_pool = ALLOC_HEAP_START;
     do {

@@ -28,8 +28,11 @@ $(OBJECTS): $(OBJ)/%.o : $(SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-run:
+run: $(BIN)/$(TARGET)
 	$(BIN)/$(TARGET)
+
+run_norm : $(BIN)/$(TARGET)
+	$(BIN)/$(TARGET) | python3 script/normalize.py
 
 clean:
 	rm -r $(OBJ) $(BIN)

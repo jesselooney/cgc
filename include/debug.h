@@ -30,7 +30,7 @@
 #endif
 
 #if VERBOSITY >= 2
-#define log_warn(MESSAGE, ...)  _log_x_inner("[WARN ]", MESSAGE, ##__VA_ARGS__)
+#define log_warn(MESSAGE, ...)  _log_x_inner("[WARN ]  ", MESSAGE, ##__VA_ARGS__)
 #else
 #define log_warn
 #endif
@@ -39,19 +39,19 @@
 /// necessary to verify the correctness of the program. Calls to TRACE should
 /// be considered stable API, because they will be checked in golden tests.
 #if VERBOSITY >= 3
-#define log_trace(MESSAGE, ...) fprintf(stdout, "[TRACE] " MESSAGE "\n", ##__VA_ARGS__);
+#define log_trace(MESSAGE, ...) fprintf(stdout, "[TRACE]    " MESSAGE "\n", ##__VA_ARGS__);
 #else
 #define log_trace
 #endif
 
 #if VERBOSITY >= 4
-#define log_info(MESSAGE, ...)  _log_x_inner("[INFO ]", MESSAGE, ##__VA_ARGS__)
+#define log_info(MESSAGE, ...)  _log_x_inner("[INFO ]      ", MESSAGE, ##__VA_ARGS__)
 #else
 #define log_info
 #endif
 
 #if VERBOSITY >= 5
-#define log_debug(MESSAGE, ...) _log_x_inner("[DEBUG]", MESSAGE, ##__VA_ARGS__)
+#define log_debug(MESSAGE, ...) _log_x_inner("[DEBUG]        ", MESSAGE, ##__VA_ARGS__)
 #else
 #define log_debug
 #endif
