@@ -33,7 +33,7 @@ exit(1);
 // ==============================================
 #ifdef GC_TRC
 
-#define gc_register(P) 
+#define gc_register(P)
 #define gc_deregister(P)
 #include "trc.h"
 #define gc_alloc(P, T) trc_alloc(P, sizeof(T), T ## __map_ptrs)

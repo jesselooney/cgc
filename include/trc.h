@@ -42,7 +42,7 @@ static void _trc_push_to_search_stack(void *p);
 // Definitions
 // ==============================================
 
-void trc_init() 
+void trc_init()
 {
     alloc_init();
 }
@@ -64,14 +64,14 @@ void trc_alloc(void **p, size_t size,
     log_trace("a %p", *p);
 }
 
-void _trc_collect() 
+void _trc_collect()
 {
     _trc_mark();
     _trc_sweep();
 }
 
 // from the root set, dfs using map_ptrs 
-void _trc_mark() 
+void _trc_mark()
 {
     // prepare dfs stack 
     SEARCH_STACK = stack_init(PTR_STACK->top);
@@ -79,12 +79,10 @@ void _trc_mark()
     // initialize dfs stack with root set
     void **item;
     size_t stack_top = PTR_STACK->top;
-    for (int i = 0; i < stack_top; i++)
-    {
+    for (int i = 0; i < stack_top; i++) {
         item = (PTR_STACK->items)[i];
         // ignore sentinels
-        if (_trc_is_heap_ptr(item))
-        {
+        if (_trc_is_heap_ptr(item)) {
             stack_push(SEARCH_STACK, item);
         }
     }
@@ -93,16 +91,17 @@ void _trc_mark()
     size_t pool_block_size;
     void (*map_ptrs)(void *, void (void *));
     // perform dfs on this stack
-    while (SEARCH_STACK->top > 0)
-    {
+    while (SEARCH_STACK->top > 0) {
         // get the next pointer to a heap pointer on the stack
         visiting = stack_pop(SEARCH_STACK);
 
         // set the corresponding mark bit for this block in that 
-        alloc_set_mark_bit(*visiting); // TODO: err rounding? maybe an issue in BLOCK_ID
+        alloc_set_mark_bit(*visiting);  // TODO: err rounding? maybe an issue in BLOCK_ID
 
         // put its pointers on the stack
-        map_ptrs = (void (*)(void *, void (void *))) (*visiting - sizeof(intptr_t));
+        map_ptrs =
+            (void (*)(void *, void (void *))) (*visiting -
+                                               sizeof(intptr_t));
         map_ptrs(*visiting, _trc_push_to_search_stack);
     }
 }
@@ -112,12 +111,11 @@ static void _trc_push_to_search_stack(void *p)
     stack_push(SEARCH_STACK, (void **) p);
 }
 
-void _trc_sweep() 
+void _trc_sweep()
 {
     // retrieve start of heap from the allocator
     void *curr_pool = ALLOC_HEAP_START;
-    do
-    {
+    do {
         // read the size of the blocks
         // load each bit vector in
         // ~ both then & 
@@ -125,16 +123,13 @@ void _trc_sweep()
         // iterate through each; free and link back to the free list
 
         pool_t *pool = curr_pool;
-        for (int i = 0; i < BITVEC_SIZE(pool->block_size); i++) 
-        {
+        for (int i = 0; i < BITVEC_SIZE(pool->block_size); i++) {
             uint8_t free_vec = pool->data[i];
             uint8_t mark_vec = pool->data[i];
-            uint8_t to_free = (~ free_vec) & (~ mark_vec);
-            for (int j = 0; j < 8; j++) 
-            {
-                if (GET_BIT(to_free, j))
-                {
-                    alloc_del_by_id(pool, i*8 + j);
+            uint8_t to_free = (~free_vec) & (~mark_vec);
+            for (int j = 0; j < 8; j++) {
+                if (GET_BIT(to_free, j)) {
+                    alloc_del_by_id(pool, i * 8 + j);
                 }
             }
         }

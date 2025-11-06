@@ -43,10 +43,10 @@ void arc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void(*f)(void *)))
 {
     _arc_header_t *header = malloc(size + sizeof(_arc_header_t));
-    
+
     header->ref_count = 1;
     header->map_ptrs = map_ptrs;
-    
+
     *p = (void *) (header + 1);
     log_trace("a %p", *p);
 }
