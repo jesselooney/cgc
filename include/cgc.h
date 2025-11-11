@@ -22,6 +22,9 @@
 static void _cgc_init()
 {
     ptr_stack_init();
+#ifdef GC_ARC
+    arc_init();
+#endif
 #ifdef GC_TRC
     trc_init();
 #endif

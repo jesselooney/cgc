@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -10,7 +11,7 @@ if not GOLDENS_DIR.is_dir():
     print("[ERROR] Goldens directory does not exist.")
     sys.exit(1)
 
-# TODO: Maybe clean NEW_GOLDENS_DIR?
+shutil.rmtree(NEW_GOLDENS_DIR, ignore_errors=True)
 
 subprocess.run(["make", f"GOLD_OUT={str(NEW_GOLDENS_DIR)}", "gold_generate"])
 
@@ -28,8 +29,8 @@ for golden in GOLDENS_DIR.iterdir():
 
         completed_process = subprocess.run(["diff", str(golden), str(new_golden)], capture_output=True, text=True)
 
-        if completed_process.returncode == 1:
-            # New golden differs from the existing one.
+        if completed_process.returncode != 0:
+            # New golden differs from the existing one, or there was an error.
             print(f"[ERROR] Golden test '{golden.name}' failed.")
             print(completed_process.stdout)
             print("==========================================")
@@ -45,5 +46,4 @@ if success_count < test_count:
     print(f"New goldens for failed tests are preserved in {str(NEW_GOLDENS_DIR)}")
     sys.exit(1)
 else:
-    # Directory should be empty since all tests passed.
-    NEW_GOLDENS_DIR.rmdir()
+    shutil.rmtree(NEW_GOLDENS_DIR)

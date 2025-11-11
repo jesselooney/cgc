@@ -35,7 +35,7 @@ run_norm : $(BIN)/$(DEFAULT_TARGET)
 	$(BIN)/$(DEFAULT_TARGET) | python3 script/normalize.py
 
 clean:
-	rm -r $(OBJ) $(BIN)
+	rm -r $(BIN)
 
 format:
 	@# Requires GNU Indent

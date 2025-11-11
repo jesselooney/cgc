@@ -27,6 +27,7 @@ typedef struct {
 
 void alloc_init();
 void *alloc_new(size_t size);
+void alloc_del();
 void alloc_del_by_id(pool_t * pool, size_t block_id);
 void alloc_set_mark_bit(void *block);
 bool alloc_is_heap_ptr(void *ptr);
@@ -145,9 +146,20 @@ void *alloc_new(size_t size)
     return block;
 }
 
+void alloc_del(void *block) {
+    log_info("alloc_del(%p)", block);
+
+    pool_t *pool = (pool_t *) GET_POOL((intptr_t) block);
+    size_t block_id = BLOCK_ID((intptr_t) pool, (intptr_t) block);
+    alloc_del_by_id(pool, block_id);
+
+    log_info("alloc_del(...) == void");
+}
+
 void alloc_del_by_id(pool_t *pool, size_t block_id)
 {
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
+
     void *block = GET_BLOCK(pool, block_id);
     _alloc_set_free_bit_by_id(pool, block_id);
 
@@ -158,6 +170,8 @@ void alloc_del_by_id(pool_t *pool, size_t block_id)
     // Insert `block` at the front of the correct free list.
     *((void **) block) = ALLOC_FREE_LISTS[index];
     ALLOC_FREE_LISTS[index] = block;
+    
+    log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 }
 
 // alloc_set_mark_bit(void*)
