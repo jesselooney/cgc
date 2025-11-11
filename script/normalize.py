@@ -1,5 +1,10 @@
 import sys
 import re
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--gold", action="store_true")
+args = parser.parse_args()
 
 ptrs = {}
 normalized = ""
@@ -20,5 +25,6 @@ for p in ptrs:
 
 print(normalized)
 
-for k, v in sorted(subs.items()):
-    print(f"{v}\t{k}")
+if not args.gold:
+    for k, v in sorted(subs.items()):
+        print(f"{v}\t{k}")

@@ -1,4 +1,3 @@
-TARGET = main
 SRC = src
 INCLUDE = include
 OBJ = obj
@@ -19,20 +18,19 @@ LINKER = gcc
 SOURCES := $(wildcard $(SRC)/*.c)
 HEADERS := $(wildcard $(INCLUDE)/*.h)
 OBJECTS := $(SOURCES:$(SRC)/%.c=$(OBJ)/%.o)
+TARGETS := $(SOURCES:$(SRC)/%.c=$(BIN)/%)
 
-$(BIN)/$(TARGET): $(OBJECTS)
+DEFAULT_TARGET := main
+
+$(TARGETS): $(BIN)/%:$(SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
-	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
-$(OBJECTS): $(OBJ)/%.o : $(SRC)/%.c $(HEADERS)
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+run: $(BIN)/$(DEFAULT_TARGET)
+	$(BIN)/$(DEFAULT_TARGET)
 
-run: $(BIN)/$(TARGET)
-	$(BIN)/$(TARGET)
-
-run_norm : $(BIN)/$(TARGET)
-	$(BIN)/$(TARGET) | python3 script/normalize.py
+run_norm : $(BIN)/$(DEFAULT_TARGET)
+	$(BIN)/$(DEFAULT_TARGET) | python3 script/normalize.py
 
 clean:
 	rm -r $(OBJ) $(BIN)
@@ -58,7 +56,8 @@ GOLD_BIN = $(GOLD_ROOT)/bin
 GOLD_SOURCES := $(wildcard $(GOLD_SRC)/*.c)
 GOLD_OBJECTS := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_OBJ)/%.o)
 GOLD_TARGETS_ARC := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%_arc)
-GOLD_TARGETS = $(GOLD_TARGETS_ARC) # $(GOLD_TARGETS_TRC)
+GOLD_TARGETS_TRC := $(GOLD_SOURCES:$(GOLD_SRC)/%.c=$(GOLD_BIN)/%_trc)
+GOLD_TARGETS = $(GOLD_TARGETS_TRC) $(GOLD_TARGETS_ARC) 
 
 GOLD_GOLDENS_OUTDIR := $(GOLD_ROOT)/goldens
 ifdef GOLD_OUT
@@ -70,6 +69,10 @@ $(GOLD_TARGETS_ARC) : $(GOLD_BIN)/%_arc:$(GOLD_SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(GOLD_CFLAGS) -DGC_ARC $< -o $@
 
+$(GOLD_TARGETS_TRC) : $(GOLD_BIN)/%_trc:$(GOLD_SRC)/%.c $(HEADERS)
+	@mkdir -p $(@D)
+	$(CC) $(GOLD_CFLAGS) -DGC_TRC $< -o $@
+
 gold : $(GOLD_TARGETS)
 
 gold_clean :
@@ -77,7 +80,7 @@ gold_clean :
 
 $(GOLD_GOLDENS_TARGETS) : $(GOLD_GOLDENS_OUTDIR)/%.golden:$(GOLD_BIN)/% 
 	@mkdir -p $(@D)
-	$< | python3 script/normalize.py > $@
+	$< | python3 script/normalize.py --gold > $@
 
 gold_generate : $(GOLD_GOLDENS_TARGETS)
 

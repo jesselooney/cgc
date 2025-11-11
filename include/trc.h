@@ -32,8 +32,6 @@ static void _trc_mark();
 
 static void _trc_sweep();
 
-static _trc_header_t *_trc_get_header_ptr(void *p);
-
 static bool _trc_is_heap_ptr(void *p);
 
 static void _trc_push_to_search_stack(void *p);
