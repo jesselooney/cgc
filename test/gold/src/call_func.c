@@ -32,18 +32,18 @@ int main()
     cgc_alloc(&heap_list, list_t);
     *heap_list = static_list;
 
-    // `heap_list` is a heap pointer.
-    add_to_head(heap_list, 1);
-    // `&stack_list` is a stack pointer and should be ignored by the scope code
-    // inside `add_to_head`.
-    add_to_head(&stack_list, 1);
     // `&static_list` is a statics pointer and should be ignored by the scope
     // code inside `add_to_head`.
     add_to_head(&static_list, 1);
+    // `&stack_list` is a stack pointer and should be ignored by the scope code
+    // inside `add_to_head`.
+    add_to_head(&stack_list, 1);
+    // `heap_list` is a heap pointer.
+    add_to_head(heap_list, 1);
 
-    assert(heap_list->head == 1);
-    assert(stack_list.head == 1);
     assert(static_list.head == 1);
+    assert(stack_list.head == 1);
+    assert(heap_list->head == 1);
 
     cgc_scope_end();
     cgc_collect();

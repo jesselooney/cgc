@@ -94,7 +94,6 @@ static _arc_header_t *_arc_get_header_ptr(void *p)
 static bool _arc_is_heap_ptr(void *p)
 {
     log_info("_arc_is_heap_ptr(%p)", p);
-    // TODO: Implement this.
     bool ret = alloc_is_heap_ptr(p);
     log_info("_arc_is_heap_ptr(...) == %d", ret);
     return ret;
