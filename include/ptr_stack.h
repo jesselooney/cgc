@@ -63,7 +63,7 @@ void ptr_stack_scope_end()
 {
     while (true) {
         void **p = _ptr_stack_pop();
-        if (p == NULL)
+        if (p == _PTR_STACK_SENTINEL)
             break;
         gc_deregister(*p);
     }

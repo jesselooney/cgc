@@ -24,7 +24,7 @@
 #endif
 
 #if VERBOSITY >= 1
-#define log_error(MESSAGE, ...) _log_x_inner("[DEBUG]", MESSAGE, ##__VA_ARGS__)
+#define log_error(MESSAGE, ...) _log_x_inner("[ERROR]", MESSAGE, ##__VA_ARGS__)
 #else
 #define log_error
 #endif
