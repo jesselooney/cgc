@@ -30,7 +30,7 @@ static void _cgc_init()
 
 static void _cgc_collect()
 {
-    #ifdef GC_TRC
+#ifdef GC_TRC
     trc_collect();
-    #endif
+#endif
 }

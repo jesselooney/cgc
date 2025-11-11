@@ -3,6 +3,7 @@
 
 #include <errno.h>
 #include <sys/mman.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -28,6 +29,7 @@ void alloc_init();
 void *alloc_new(size_t size);
 void alloc_del_by_id(pool_t * pool, size_t block_id);
 void alloc_set_mark_bit(void *block);
+bool alloc_is_heap_ptr(void *ptr);
 
 static void *_alloc_new_pool(size_t size);
 static void _alloc_set_free_bit_by_id(pool_t * pool, size_t block_id);
@@ -35,7 +37,8 @@ static void _alloc_clear_free_bit(void *block);
 
 typedef struct {
     int exp;
-    int pow;                    // 2^exp
+    // Should always be 2^exp.
+    int pow;
 } _log2_ceil_return_t;
 
 static _log2_ceil_return_t _alloc_log2_ceil(size_t size);
@@ -169,6 +172,11 @@ void alloc_set_mark_bit(void *block)
     uint8_t *resident_byte =
         &pool->data[BITVEC_SIZE(pool->block_size) + (block_id / 8)];
     SET_BIT(resident_byte, block_id % 8);
+}
+
+bool alloc_is_heap_ptr(void *ptr)
+{
+    return ALLOC_HEAP_START <= ptr && ptr < ALLOC_HEAP_TOP;
 }
 
 //  _alloc_new_pool(size_t)

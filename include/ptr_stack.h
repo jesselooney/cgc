@@ -14,25 +14,20 @@
 // Members
 // ==============================================
 
-// #define _PTR_STACK_SENTINEL
+#define _PTR_STACK_SENTINEL NULL
 
 stack_t *PTR_STACK = NULL;
 
 void ptr_stack_init();
-
 void ptr_stack_scope_start(int arg_count, ...);
-
 void ptr_stack_push(void **p);
-
 void ptr_stack_scope_end();
 
-void **_ptr_stack_pop();
+static void **_ptr_stack_pop();
 
 // ==============================================
 // Definitions
 // ==============================================
-
-#define _PTR_STACK_SENTINEL NULL
 
 void ptr_stack_init()
 {
@@ -74,7 +69,7 @@ void ptr_stack_scope_end()
     }
 }
 
-void **_ptr_stack_pop()
+static void **_ptr_stack_pop()
 {
     void **p = stack_pop(PTR_STACK);
     log_info("ptr_stack_pop() == %p", p);
