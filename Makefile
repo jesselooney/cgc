@@ -22,6 +22,8 @@ TARGETS := $(SOURCES:$(SRC)/%.c=$(BIN)/%)
 
 DEFAULT_TARGET := main
 
+default: $(TARGETS)
+
 $(TARGETS): $(BIN)/%:$(SRC)/%.c $(HEADERS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $< -o $@
@@ -39,7 +41,7 @@ format:
 	@# Requires GNU Indent
 	VERSION_CONTROL=never indent -kr --no-tabs $(SOURCES) $(HEADERS)
 
-.PHONY: run clean format
+.PHONY: default run clean format
 
 # ===============================================
 # GOLD
