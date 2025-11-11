@@ -56,7 +56,7 @@ static _log2_ceil_return_t _alloc_log2_ceil(size_t size);
 
 static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
 
-#define BITVEC_SIZE(block_size) (ALLOC_POOL_SIZE / block_size / 8)
+#define BITVEC_SIZE(block_size) ((ALLOC_POOL_SIZE) / (block_size) / 8)
 #define HEADER_SIZE(block_size) (sizeof(size_t) + 2 * BITVEC_SIZE(block_size))
 #define BLOCKS_PER_HEADER(block_size) ((HEADER_SIZE(block_size) + (block_size) - 1) / (block_size))
 

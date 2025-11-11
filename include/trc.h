@@ -43,6 +43,10 @@ void trc_init()
 void trc_alloc(void **p, size_t size,
                void (*map_ptrs)(void *, void(*f)(void *)))
 {
+    if (p == NULL) {
+        log_error("Passed NULL to trc_alloc (did you mean to pass &p instead of p?)");
+        exit(1);
+    }
     _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
     if (header == NULL) {
         trc_collect();
@@ -113,7 +117,8 @@ void _trc_sweep()
     log_info("_trc_sweep()");
     // retrieve start of heap from the allocator
     void *curr_pool = ALLOC_HEAP_START;
-    do {
+
+    for (void *curr_pool = ALLOC_HEAP_START; curr_pool < ALLOC_HEAP_TOP; curr_pool += ALLOC_POOL_SIZE) {
         // read the size of the blocks
         // load each bit vector in
         // ~ both then & 
@@ -138,8 +143,6 @@ void _trc_sweep()
             }
         }
     }
-    // in 0x10000 steps,
-    while ((curr_pool += ALLOC_POOL_SIZE) < ALLOC_HEAP_TOP);
 }
 
 static bool _trc_is_heap_ptr(void *p)
