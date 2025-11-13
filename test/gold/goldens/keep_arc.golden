@@ -1,0 +1,11 @@
+[TRACE]    a < A >
+[TRACE]    pushing 1
+[TRACE]    a < B >
+[TRACE]    pushing 2
+[TRACE]    a < C >
+[TRACE]    forcing collection
+[TRACE]    list->tail and list->tail->tail should still be allocated
+[TRACE]    f < A >
+[TRACE]    f < B >
+[TRACE]    f < C >
+
