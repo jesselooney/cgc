@@ -23,11 +23,10 @@ void iterate() {
     cgc_alloc(&b, list_t);
     
     cgc_scope_declare(list_t*, c);
-    cgc_alloc(&c, list_t);
+    //cgc_alloc(&c, list_t);
 
     cgc_assign(&a->tail, b);
     cgc_assign(&b->tail, c);
-    cgc_assign(&c->tail, a);
 
     cgc_scope_end();
     return;

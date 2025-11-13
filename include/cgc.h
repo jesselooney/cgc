@@ -3,6 +3,7 @@
 
 #include "gc.h"
 #include "macros.h"
+#include "monitor.h"
 
 #define cgc_alloc(P, T) gc_alloc(P, T)
 #define cgc_assign(P, Q) gc_assign(P, Q)
@@ -22,6 +23,7 @@
 static void _cgc_init()
 {
     ptr_stack_init();
+    monitor_init();
 #ifdef GC_ARC
     arc_init();
 #endif

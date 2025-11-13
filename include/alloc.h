@@ -14,6 +14,9 @@
 // Members
 //===============================================
 
+int ALLOC_NUM_ALLOCATED_BLOCKS = 0;
+size_t ALLOC_SIZE_OF_ALLOCATED_MEMORY = 0;
+
 #define ALLOC_POOL_SIZE_EXP 16
 #define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
 
@@ -143,6 +146,9 @@ void *alloc_new(size_t size)
     _alloc_clear_free_bit(block);
 
     log_info("alloc_new(...) == %p", block);
+
+    ALLOC_NUM_ALLOCATED_BLOCKS += 1;
+    ALLOC_SIZE_OF_ALLOCATED_MEMORY += block_size;
     return block;
 }
 
@@ -172,6 +178,9 @@ void alloc_del_by_id(pool_t *pool, size_t block_id)
     ALLOC_FREE_LISTS[index] = block;
     
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
+
+    ALLOC_NUM_ALLOCATED_BLOCKS -= 1;
+    ALLOC_SIZE_OF_ALLOCATED_MEMORY -= pool->block_size;
 }
 
 // alloc_set_mark_bit(void*)

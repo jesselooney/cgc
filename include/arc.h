@@ -46,6 +46,10 @@ void arc_alloc(void **p, size_t size,
 {
     log_info("arc_alloc(%p, %ld, %p)", p, size, map_ptrs);
     _arc_header_t *header = alloc_new(size + sizeof(_arc_header_t));
+    if (header == NULL) {
+        log_error("Failed to allocate a block of size %ld", size);
+        exit(1);
+    }
 
     header->ref_count = 1;
     header->map_ptrs = map_ptrs;
