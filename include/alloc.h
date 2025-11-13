@@ -14,12 +14,18 @@
 // Members
 //===============================================
 
-int ALLOC_NUM_ALLOCATED_BLOCKS = 0;
-size_t ALLOC_SIZE_OF_ALLOCATED_MEMORY = 0;
-
+// active parameters
 #define ALLOC_POOL_SIZE_EXP 16
-#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
+#define ALLOC_HEAP_SIZE_EXP 30
 
+#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
+#define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
+#define ALLOC_MIN_BLOCK_COUNT_EXP 3
+#define ALLOC_MAX_BLOCK_COUNT_EXP 6
+#define ALLOC_MIN_BLOCK_SIZE_EXP 5
+#define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
+
+static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
 static void *ALLOC_HEAP_START = NULL;
 static void *ALLOC_HEAP_TOP = NULL;
 
@@ -33,24 +39,25 @@ typedef void block_t;
 void alloc_init();
 void *alloc_new(size_t size);
 void alloc_del();
-void alloc_del_by_id(pool_t *pool, int block_id);
-void alloc_set_mark_bit(block_t *block);
+void alloc_del_by_id(pool_t * pool, int block_id);
+void alloc_set_mark_bit(block_t * block);
 bool alloc_is_heap_ptr(void *ptr);
 
 static void *_alloc_new_pool(size_t size);
-static void _alloc_set_free_bit_by_id(pool_t *pool, size_t block_id);
-static void _alloc_clear_free_bit(block_t *block);
+static void _alloc_set_free_bit_by_id(pool_t * pool, size_t block_id);
+static void _alloc_clear_free_bit(block_t * block);
 
 size_t bitvec_size(size_t block_size);
 size_t header_size(size_t block_size);
-pool_t* get_pool(block_t *block);
-int get_block_id(pool_t *pool, block_t *block);
-block_t * get_block_by_id(pool_t *pool, int block_id);
+pool_t *get_pool(block_t * block);
+int get_block_id(pool_t * pool, block_t * block);
+block_t *get_block_by_id(pool_t * pool, int block_id);
 
 int get_bit(uint8_t byte, int index);
-void set_bit(uint8_t* byte_ptr, int index);
-void clear_bit(uint8_t* byte_ptr, int index);
+void set_bit(uint8_t * byte_ptr, int index);
+void clear_bit(uint8_t * byte_ptr, int index);
 
+// log2 ceil
 typedef struct {
     int exp;
     // Should always be 2^exp.
@@ -59,18 +66,13 @@ typedef struct {
 
 static _log2_ceil_return_t _alloc_log2_ceil(size_t size);
 
+// monitor members
+int ALLOC_NUM_ALLOCATED_BLOCKS = 0;
+size_t ALLOC_SIZE_OF_ALLOCATED_MEMORY = 0;
+
 //===============================================
 // Definitions
 //===============================================
-
-#define ALLOC_HEAP_SIZE_EXP 30
-#define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
-#define ALLOC_MIN_BLOCK_COUNT_EXP 3
-#define ALLOC_MAX_BLOCK_COUNT_EXP 6
-#define ALLOC_MIN_BLOCK_SIZE_EXP 5
-#define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
-
-static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
 
 //  alloc_init()
 //      initialize a giant slab of memory for us to parse up. start the heap at the first 
@@ -151,7 +153,8 @@ void *alloc_new(size_t size)
     return block;
 }
 
-void alloc_del(block_t *block) {
+void alloc_del(block_t * block)
+{
     log_info("alloc_del(%p)", block);
 
     pool_t *pool = get_pool(block);
@@ -161,7 +164,7 @@ void alloc_del(block_t *block) {
     log_info("alloc_del(...) == void");
 }
 
-void alloc_del_by_id(pool_t *pool, int block_id)
+void alloc_del_by_id(pool_t * pool, int block_id)
 {
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 
@@ -175,7 +178,7 @@ void alloc_del_by_id(pool_t *pool, int block_id)
     // Insert `block` at the front of the correct free list.
     *((void **) block) = ALLOC_FREE_LISTS[index];
     ALLOC_FREE_LISTS[index] = block;
-    
+
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 
     ALLOC_NUM_ALLOCATED_BLOCKS -= 1;
@@ -185,7 +188,7 @@ void alloc_del_by_id(pool_t *pool, int block_id)
 // alloc_set_mark_bit(void*)
 //      we have found an object that has a live pointer to it. pass that pointer to the object 
 //      to set its mark bit in the bitmap
-void alloc_set_mark_bit(block_t *block)
+void alloc_set_mark_bit(block_t * block)
 {
     // block is theoretically the pointer to the start of a heap allocated block, but it 
     // could point inside of one and the rounding should work out, probably.
@@ -256,13 +259,13 @@ static void *_alloc_new_pool(size_t block_size)
     return prev;
 }
 
-static void _alloc_set_free_bit_by_id(pool_t *pool, size_t block_id)
+static void _alloc_set_free_bit_by_id(pool_t * pool, size_t block_id)
 {
     uint8_t *resident_byte = &pool->data[block_id / 8];
     set_bit(resident_byte, block_id % 8);
 }
 
-static void _alloc_clear_free_bit(block_t *block)
+static void _alloc_clear_free_bit(block_t * block)
 {
     log_info("_alloc_clear_free_bit(%p)", block);
 
@@ -298,35 +301,44 @@ static _log2_ceil_return_t _alloc_log2_ceil(size_t size)
 }
 
 
-size_t bitvec_size(size_t block_size) {
+size_t bitvec_size(size_t block_size)
+{
     return ALLOC_POOL_SIZE / block_size / 8;
 }
 
-size_t header_size(size_t block_size) {
+size_t header_size(size_t block_size)
+{
     return sizeof(size_t) + 2 * bitvec_size(block_size);
 }
 
-pool_t* get_pool(block_t *block) {
-    return (pool_t*) (((intptr_t) block >> ALLOC_POOL_SIZE_EXP) << ALLOC_POOL_SIZE_EXP);
+pool_t *get_pool(block_t * block)
+{
+    return (pool_t *) (((intptr_t) block >> ALLOC_POOL_SIZE_EXP) <<
+                       ALLOC_POOL_SIZE_EXP);
 }
 
-int get_block_id(pool_t *pool, block_t *block) {
+int get_block_id(pool_t * pool, block_t * block)
+{
     return ((intptr_t) block - (intptr_t) pool) / pool->block_size;
 }
 
-block_t * get_block_by_id(pool_t *pool, int block_id) {
+block_t *get_block_by_id(pool_t * pool, int block_id)
+{
     return (block_t *) (((intptr_t) pool) + (block_id * pool->block_size));
 }
 
-int get_bit(uint8_t byte, int index) {
+int get_bit(uint8_t byte, int index)
+{
     return (byte >> index) & 1;
 }
 
-void set_bit(uint8_t* byte_ptr, int index) {
+void set_bit(uint8_t * byte_ptr, int index)
+{
     *byte_ptr |= 1 << index;
 }
 
-void clear_bit(uint8_t* byte_ptr, int index) {
+void clear_bit(uint8_t * byte_ptr, int index)
+{
     *byte_ptr &= ~(1 << index);
 }
 

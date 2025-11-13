@@ -8,12 +8,12 @@ typedef struct list {
     struct list *tail;
 } list_t;
 
-void list_t__map_ptrs(list_t *a, void (*f)(void *))
+void list_t__map_ptrs(list_t * a, void (*f)(void *))
 {
-    (*f) (a->tail);
+    (*f)(a->tail);
 }
 
-void fun(list_t* p)
+void fun(list_t * p)
 {
     cgc_scope_start(&p);
     cgc_scope_end();
