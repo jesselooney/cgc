@@ -39,7 +39,8 @@ typedef void block_t;
 void alloc_init();
 void *alloc_new(size_t size);
 void alloc_del();
-void alloc_del_by_id(pool_t * pool, int block_id);
+void alloc_del_by_id(pool_t * pool, size_t block_id);
+bool alloc_get_mark_bit(void *block);
 void alloc_set_mark_bit(block_t * block);
 bool alloc_is_heap_ptr(void *ptr);
 
@@ -51,7 +52,7 @@ size_t bitvec_size(size_t block_size);
 size_t header_size(size_t block_size);
 pool_t *get_pool(block_t * block);
 int get_block_id(pool_t * pool, block_t * block);
-block_t *get_block_by_id(pool_t * pool, int block_id);
+block_t *get_block_by_id(pool_t * pool, size_t block_id);
 
 int get_bit(uint8_t byte, int index);
 void set_bit(uint8_t * byte_ptr, int index);
@@ -164,7 +165,7 @@ void alloc_del(block_t * block)
     log_info("alloc_del(...) == void");
 }
 
-void alloc_del_by_id(pool_t * pool, int block_id)
+void alloc_del_by_id(pool_t * pool, size_t block_id)
 {
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 
@@ -185,11 +186,25 @@ void alloc_del_by_id(pool_t * pool, int block_id)
     ALLOC_SIZE_OF_ALLOCATED_MEMORY -= pool->block_size;
 }
 
+bool alloc_get_mark_bit(void *block) {
+    log_info("alloc_get_mark_bit(%p)", block);
+
+    pool_t *pool = get_pool(block);
+    size_t block_id = get_block_id(pool, block);
+    uint8_t resident_byte =
+        pool->data[bitvec_size(pool->block_size) + (block_id / 8)];
+    bool ret = get_bit(resident_byte, block_id % 8);
+
+    log_info("alloc_get_mark_bit(...) == %d", ret);
+    return ret;
+}
+
 // alloc_set_mark_bit(void*)
 //      we have found an object that has a live pointer to it. pass that pointer to the object 
 //      to set its mark bit in the bitmap
 void alloc_set_mark_bit(block_t * block)
 {
+    log_info("alloc_set_mark_bit(%p)", block);
     // block is theoretically the pointer to the start of a heap allocated block, but it 
     // could point inside of one and the rounding should work out, probably.
     pool_t *pool = get_pool(block);
@@ -197,6 +212,7 @@ void alloc_set_mark_bit(block_t * block)
     uint8_t *resident_byte =
         &pool->data[bitvec_size(pool->block_size) + (block_id / 8)];
     set_bit(resident_byte, block_id % 8);
+    log_info("alloc_set_mark_bit(...) == void");
 }
 
 bool alloc_is_heap_ptr(void *ptr)
@@ -322,7 +338,7 @@ int get_block_id(pool_t * pool, block_t * block)
     return ((intptr_t) block - (intptr_t) pool) / pool->block_size;
 }
 
-block_t *get_block_by_id(pool_t * pool, int block_id)
+block_t *get_block_by_id(pool_t * pool, size_t block_id)
 {
     return (block_t *) (((intptr_t) pool) + (block_id * pool->block_size));
 }

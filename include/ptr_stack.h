@@ -14,7 +14,7 @@
 // Members
 // ==============================================
 
-#define _PTR_STACK_SENTINEL NULL
+#define PTR_STACK_SENTINEL NULL
 
 stack_t *PTR_STACK = NULL;
 
@@ -43,7 +43,7 @@ void ptr_stack_scope_start(int arg_count, ...)
     va_list args;
     va_start(args, arg_count);
 
-    stack_push(PTR_STACK, _PTR_STACK_SENTINEL);
+    stack_push(PTR_STACK, PTR_STACK_SENTINEL);
     for (int i = 0; i < arg_count; i++) {
         void **p = va_arg(args, void **);
         gc_register(*p);
@@ -59,7 +59,7 @@ void ptr_stack_push(void **p)
 {
     log_info("ptr_stack_push(%p)", p);
 
-    if (p == _PTR_STACK_SENTINEL) {
+    if (p == PTR_STACK_SENTINEL) {
         log_warn("Tried to push sentinel value onto PTR_STACK");
         return;
     }
@@ -74,7 +74,7 @@ void ptr_stack_scope_end()
 
     while (true) {
         void **p = _ptr_stack_pop();
-        if (p == _PTR_STACK_SENTINEL)
+        if (p == PTR_STACK_SENTINEL)
             break;
         gc_deregister(*p);
     }

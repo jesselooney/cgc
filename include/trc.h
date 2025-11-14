@@ -35,6 +35,7 @@ static void _trc_push_to_search_stack(void *p);
 // Definitions
 // ==============================================
 
+
 void trc_init()
 {
     alloc_init();
@@ -73,7 +74,7 @@ void _trc_mark()
 {
     log_info("_trc_mark()");
 
-    log_debug("pushing root set onto search stack");
+    log_info("pushing root set onto search stack");
     // prepare dfs stack 
     SEARCH_STACK = stack_init(PTR_STACK->top);
 
@@ -82,61 +83,75 @@ void _trc_mark()
     size_t stack_top = PTR_STACK->top;
     for (int i = 0; i < stack_top; i++) {
         item = (PTR_STACK->items)[i];
+        log_info("processing ptr stack item %p", item);
         // Ignore sentinels and pointers to non-heap objects.
-        if (_trc_is_heap_ptr(item)) {
-            log_debug("pushing pointer %p", item);
-            stack_push(SEARCH_STACK, item);
+        if (item != PTR_STACK_SENTINEL && _trc_is_heap_ptr(*item)) {
+            log_debug("pushing pointer %p", *item);
+            stack_push(SEARCH_STACK, *item);
         }
     }
 
-    void **visiting;
-    size_t pool_block_size;
-    void (*map_ptrs)(void *, void(void *));
-    // perform dfs on this stack
+    // Perform DFS on starting from the root set stack.
+    log_info("starting DFS");
+    void *visiting;
     while (SEARCH_STACK->top > 0) {
-        // get the next pointer to a heap pointer on the stack
         visiting = stack_pop(SEARCH_STACK);
 
-        // set the corresponding mark bit for this block in that 
-        alloc_set_mark_bit(*visiting);
+        log_info("visiting heap object at %p", visiting);
 
-        // put its pointers on the stack
-        map_ptrs =
-            (void (*)(void *, void (void *))) (*visiting -
-                                               sizeof(intptr_t));
-        map_ptrs(*visiting, _trc_push_to_search_stack);
+        // TODO: skip if already marked.
+
+        // Mark that we found a path from the root set to `visiting`.
+        alloc_set_mark_bit(visiting);
+        
+        _trc_header_t *header = visiting - sizeof(_trc_header_t);
+
+        // Push the pointers contained in `visiting` onto the search stack.
+        (*header->map_ptrs)(visiting, _trc_push_to_search_stack);
     }
+
+    log_info("trc_mark(...) == void");
 }
 
 static void _trc_push_to_search_stack(void *p)
 {
-    stack_push(SEARCH_STACK, (void **) p);
+    log_info("_trc_push_to_search_stack(%p", p);
+
+    if (_trc_is_heap_ptr(p)) {
+        if (!alloc_get_mark_bit(p)) {
+            stack_push(SEARCH_STACK, (void **) p);
+        } else {
+            log_info("already marked; skipping");
+        }
+    } else {
+        log_info("not a heap pointer; skipping");
+    }
+
+    log_info("_trc_push_to_search_stack(...) == void");
 }
 
 void _trc_sweep()
 {
     log_info("_trc_sweep()");
-    // retrieve start of heap from the allocator
-    void *curr_pool = ALLOC_HEAP_START;
 
     for (void *curr_pool = ALLOC_HEAP_START; curr_pool < ALLOC_HEAP_TOP;
          curr_pool += ALLOC_POOL_SIZE) {
-        // read the size of the blocks
-        // load each bit vector in
-        // ~ both then & 
-        // any 1's correspond to blocks to free
-        // iterate through each; free and link back to the free list
-
         pool_t *pool = curr_pool;
-        log_debug("in pool beginning at %p", pool);
-        // bitvec_size is the # of uint8_t's to iterate over for one of the bitvectors
+        log_info("sweeping pool at %p", pool);
+        // bitvec_size yields the number of bytes in the bitvec for this pool.
         for (int i = 0; i < bitvec_size(pool->block_size); i++) {
-            uint8_t free_vec = pool->data[i];
-            uint8_t mark_vec =
-                pool->data[bitvec_size(pool->block_size) + i];
-            uint8_t to_free = (~free_vec) & (~mark_vec);
+            // Get the ith byte of the bitvec containing the free and mark bits.
+            uint8_t is_free = pool->data[i];
+            uint8_t *is_marked =
+                &pool->data[bitvec_size(pool->block_size) + i];
+            uint8_t should_free = ~(is_free | *is_marked);
+
+            // Clear the mark bits now that we've used them.
+            *is_marked = 0;
+
+            // For each bit, free the corresponding block if applicable.
             for (int j = 0; j < 8; j++) {
-                if (get_bit(to_free, j)) {
+                if (get_bit(should_free, j)) {
                     alloc_del_by_id(pool, i * 8 + j);
                     log_trace("f %p",
                               ((_trc_header_t
@@ -146,11 +161,16 @@ void _trc_sweep()
             }
         }
     }
+
+    log_info("_trc_sweep(...) == void");
 }
 
 static bool _trc_is_heap_ptr(void *p)
 {
-    return alloc_is_heap_ptr(p);
+    log_info("_trc_is_heap_ptr(%p)", p);
+    bool ret = alloc_is_heap_ptr(p);
+    log_info("_trc_is_heap_ptr(...) == %d", ret);
+    return ret;
 }
 
 #endif
