@@ -16,12 +16,12 @@
 
 typedef struct {
     size_t ref_count;
-    void (*map_ptrs)(void *, void(*f)(void *));
+    void (*map_ptrs)(void *, void (*f)(void *));
 } _arc_header_t;
 
 void arc_init();
 void arc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)));
+               void (*map_ptrs)(void *, void (*f)(void *)));
 void arc_assign(void **p, void *q);
 void arc_register(void *p);
 void arc_deregister(void *p);
@@ -35,14 +35,15 @@ static void _arc_dec(void *p);
 // Definitions
 // ==============================================
 
-void arc_init() {
+void arc_init()
+{
     log_info("arc_init()");
     alloc_init();
     log_info("arc_init(...) == void");
 }
 
 void arc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)))
+               void (*map_ptrs)(void *, void (*f)(void *)))
 {
     log_info("arc_alloc(%p, %ld, %p)", p, size, map_ptrs);
     _arc_header_t *header = alloc_new(size + sizeof(_arc_header_t));

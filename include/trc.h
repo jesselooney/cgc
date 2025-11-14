@@ -18,12 +18,12 @@
 stack_t *SEARCH_STACK = NULL;
 
 typedef struct {
-    void (*map_ptrs)(void *, void(*f)(void *));
+    void (*map_ptrs)(void *, void (*f)(void *));
 } _trc_header_t;
 
 void trc_init();
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)));
+               void (*map_ptrs)(void *, void (*f)(void *)));
 void trc_collect();
 
 static void _trc_mark();
@@ -41,10 +41,11 @@ void trc_init()
 }
 
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void(*f)(void *)))
+               void (*map_ptrs)(void *, void (*f)(void *)))
 {
-    if (p == NULL) {
-        log_error("Passed NULL to trc_alloc (did you mean to pass &p instead of p?)");
+    if(p == NULL) {
+        log_error
+            ("Passed NULL to trc_alloc (did you mean to pass &p instead of p?)");
         exit(1);
     }
     _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
@@ -90,7 +91,7 @@ void _trc_mark()
 
     void **visiting;
     size_t pool_block_size;
-    void (*map_ptrs)(void *, void (void *));
+    void (*map_ptrs)(void *, void(void *));
     // perform dfs on this stack
     while (SEARCH_STACK->top > 0) {
         // get the next pointer to a heap pointer on the stack
@@ -118,7 +119,8 @@ void _trc_sweep()
     // retrieve start of heap from the allocator
     void *curr_pool = ALLOC_HEAP_START;
 
-    for (void *curr_pool = ALLOC_HEAP_START; curr_pool < ALLOC_HEAP_TOP; curr_pool += ALLOC_POOL_SIZE) {
+    for (void *curr_pool = ALLOC_HEAP_START; curr_pool < ALLOC_HEAP_TOP;
+         curr_pool += ALLOC_POOL_SIZE) {
         // read the size of the blocks
         // load each bit vector in
         // ~ both then & 
@@ -128,17 +130,18 @@ void _trc_sweep()
         pool_t *pool = curr_pool;
         log_debug("in pool beginning at %p", pool);
         // bitvec_size is the # of uint8_t's to iterate over for one of the bitvectors
-        for (int i = 0; i < BITVEC_SIZE(pool->block_size); i++) {
+        for (int i = 0; i < bitvec_size(pool->block_size); i++) {
             uint8_t free_vec = pool->data[i];
             uint8_t mark_vec =
-                pool->data[BITVEC_SIZE(pool->block_size) + i];
+                pool->data[bitvec_size(pool->block_size) + i];
             uint8_t to_free = (~free_vec) & (~mark_vec);
             for (int j = 0; j < 8; j++) {
-                if (GET_BIT(to_free, j)) {
+                if (get_bit(to_free, j)) {
                     alloc_del_by_id(pool, i * 8 + j);
                     log_trace("f %p",
                               ((_trc_header_t
-                                *) (GET_BLOCK(pool, i * 8 + j))) + 1);
+                                *) (get_block_by_id(pool,
+                                                    i * 8 + j))) + 1);
                 }
             }
         }

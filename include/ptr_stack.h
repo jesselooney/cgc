@@ -78,7 +78,7 @@ void ptr_stack_scope_end()
             break;
         gc_deregister(*p);
     }
-    
+
     log_info("ptr_stack_scope_end(...) == void");
 }
 

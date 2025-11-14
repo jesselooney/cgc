@@ -38,14 +38,14 @@ stack_t *stack_init(size_t initial_size)
     return s;
 }
 
-void stack_push(stack_t *s, void **p)
+void stack_push(stack_t * s, void **p)
 {
     if (s->top == s->max_size)
         _stack_grow(s);
     s->items[s->top++] = p;
 }
 
-void **stack_pop(stack_t *s)
+void **stack_pop(stack_t * s)
 {
     if (s->top == 0) {
         log_error("Tried to stack_pop with top == 0");
@@ -54,13 +54,13 @@ void **stack_pop(stack_t *s)
     return s->items[--s->top];
 }
 
-void stack_drop(stack_t *s)
+void stack_drop(stack_t * s)
 {
     free(s->items);
     free(s);
 }
 
-static void _stack_grow(stack_t *s)
+static void _stack_grow(stack_t * s)
 {
     log_info("_stack_grow(%p)", s);
     size_t new_max_size = s->max_size * 2;
