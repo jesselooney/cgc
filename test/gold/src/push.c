@@ -39,16 +39,13 @@ int main()
     list->head = 0;
     list->tail = NULL;
 
-    log_trace("pushing 1");
     push(&list, 1);
-    log_trace("pushing 2");
     push(&list, 2);
    
-    log_trace("forcing collection");
     cgc_collect();
-    log_trace("list->tail and list->tail->tail should still be allocated");
 
     cgc_scope_end();
+
     cgc_collect();
 
     return 0;

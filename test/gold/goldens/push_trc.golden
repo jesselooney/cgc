@@ -1,11 +1,13 @@
 [TRACE]    scope start
 [TRACE]    a < A >
 [TRACE]    scope start
+[TRACE]    a < B >
 [TRACE]    scope end
 [TRACE]    scope start
+[TRACE]    a < C >
 [TRACE]    scope end
-[TRACE]    scope start
 [TRACE]    scope end
-[TRACE]    scope end
+[TRACE]    f < C >
+[TRACE]    f < B >
 [TRACE]    f < A >
 

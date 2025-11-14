@@ -38,6 +38,7 @@ void ptr_stack_init()
 
 void ptr_stack_scope_start(int arg_count, ...)
 {
+    log_trace("scope start");
     log_info("ptr_stack_scope_start(%d, ...)", arg_count);
 
     va_list args;
@@ -70,6 +71,7 @@ void ptr_stack_push(void **p)
 
 void ptr_stack_scope_end()
 {
+    log_trace("scope end");
     log_info("ptr_stack_scope_end()");
 
     while (true) {

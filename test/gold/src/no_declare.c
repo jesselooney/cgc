@@ -16,7 +16,6 @@ int main()
 {
     cgc_init();
     cgc_scope_start();
-    cgc_scope_declare(list_t *, a);
     cgc_collect();
     cgc_scope_end();
     cgc_collect();
