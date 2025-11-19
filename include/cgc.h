@@ -22,7 +22,7 @@ static void _cgc_end();
 static void _cgc_collect();
 
 // ==============================================
-// Definitions
+// Macros
 // ==============================================
 
 #define cgc_alloc(P, T) gc_alloc(P, T)
@@ -46,6 +46,10 @@ static void _cgc_collect();
     }\
 }
 
+// ==============================================
+// Definitions
+// ==============================================
+
 static void _cgc_init()
 {
     ptr_stack_init();
@@ -60,7 +64,7 @@ static void _cgc_init()
 
 static void _cgc_end()
 {
-
+    monitor_end();
 }
 
 static void _cgc_collect()
