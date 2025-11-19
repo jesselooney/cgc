@@ -23,7 +23,6 @@ void add_to_head(list_t *a, int x) {
 
 int main()
 {
-    cgc_init();
     cgc_scope_start();
 
     list_t stack_list = static_list;

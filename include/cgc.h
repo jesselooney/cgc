@@ -4,21 +4,47 @@
 #include "gc.h"
 #include "macros.h"
 #include "monitor.h"
+#include "ptr_stack.h"
+
+// ==============================================
+// Members
+// ==============================================
+
+// #define cgc_alloc(P, T)
+// #define cgc_assign(P, Q)
+// #define cgc_scope_declare(T, N)
+// #define cgc_collect()
+// #define cgc_scope_start(...)
+// #define cgc_scope_end()
+
+static void _cgc_init();
+static void _cgc_end();
+static void _cgc_collect();
+
+// ==============================================
+// Definitions
+// ==============================================
 
 #define cgc_alloc(P, T) gc_alloc(P, T)
 #define cgc_assign(P, Q) gc_assign(P, Q)
-
-#include "ptr_stack.h"
-
-#define cgc_scope_start(...) ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), ## __VA_ARGS__)
 #define cgc_scope_declare(T, N) T N = NULL; ptr_stack_push(&N);
-#define cgc_scope_end() ptr_stack_scope_end()
-
-#define cgc_init() _cgc_init()
 #define cgc_collect() _cgc_collect()
 
-#endif
+#define cgc_scope_start(...) \
+{\
+    if (PTR_STACK == NULL) {\
+        _cgc_init();\
+    }\
+    ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), ## __VA_ARGS__);\
+}
 
+#define cgc_scope_end() \
+{\
+    ptr_stack_scope_end();\
+    if (PTR_STACK->top == 0) {\
+        _cgc_end();\
+    }\
+}
 
 static void _cgc_init()
 {
@@ -32,6 +58,10 @@ static void _cgc_init()
 #endif
 }
 
+static void _cgc_end()
+{
+
+}
 
 static void _cgc_collect()
 {
@@ -39,3 +69,5 @@ static void _cgc_collect()
     trc_collect();
 #endif
 }
+
+#endif

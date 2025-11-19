@@ -26,6 +26,7 @@
 #define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
 
 static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
+
 static void *ALLOC_HEAP_START = NULL;
 static void *ALLOC_HEAP_TOP = NULL;
 
@@ -185,7 +186,8 @@ void alloc_del_by_id(pool_t * pool, size_t block_id)
     ALLOC_SIZE_OF_ALLOCATED_MEMORY -= pool->block_size;
 }
 
-bool alloc_get_mark_bit(void *block) {
+bool alloc_get_mark_bit(void *block)
+{
     log_info("alloc_get_mark_bit(%p)", block);
 
     pool_t *pool = get_pool(block);

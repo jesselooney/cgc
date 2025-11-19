@@ -46,7 +46,6 @@ int main() {
     f = fopen(buf, "w");
     cgc_monitor_register_outfile(f);
 
-    cgc_init();
     cgc_scope_start();
 
     for (int i = 0; i < 1000; i++) {
