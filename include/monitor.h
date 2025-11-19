@@ -5,7 +5,7 @@
 #include <time.h>
 #include "alloc.h"
 
-#define MONITOR_BUFFER_SIZE 1
+#define MONITOR_BUFFER_SIZE 100
 
 // ==============================================
 // Members
@@ -36,11 +36,14 @@ void monitor_init()
     const char* outpath = getenv("CGC_OUTPATH");
     if (outpath) {
         enabled = true;
+
         outfile = fopen(outpath, "w");
         if (outfile == NULL) {
             perror("death and bad (error opening outfile csv)");
             exit(1);
         }
+        //setvbuf(outfile, NULL, _IOFBF, MONITOR_BUFFER_SIZE);
+
         clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     }
 }
@@ -48,6 +51,7 @@ void monitor_init()
 void monitor_end()
 {
     if (enabled) {
+        fflush(outfile);
         fclose(outfile);
     }
 }
