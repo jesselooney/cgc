@@ -36,7 +36,14 @@ void cgc_monitor_register_outfile(FILE * f)
 
 void cgc_monitor_write_state()
 {
-    monitor_write_state();
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+    time_t sec_elapsed = (now.tv_sec - start.tv_sec) * 1000000 +
+        (now.tv_nsec - start.tv_nsec) / 1000;
+    fprintf(outfile, "%ld, %d, %ld\n",
+            sec_elapsed,
+            ALLOC_NUM_ALLOCATED_BLOCKS, ALLOC_SIZE_OF_ALLOCATED_MEMORY);
+    fflush(outfile);
 }
 
 void monitor_write_state()
