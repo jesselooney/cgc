@@ -93,7 +93,7 @@ void alloc_init()
     }
 
     log_debug("ptr == %p", (void *) ptr);
-    ALLOC_HEAP_START = (void *) (ptr + ((intptr_t) ptr % ALLOC_POOL_SIZE));
+    ALLOC_HEAP_START = (void *) (ptr + (ALLOC_POOL_SIZE - ((intptr_t) ptr % ALLOC_POOL_SIZE)));
     ALLOC_HEAP_TOP = ALLOC_HEAP_START;
     log_debug("ALLOC_HEAP_START == ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
     log_info("alloc_init() == void");
