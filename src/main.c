@@ -19,9 +19,8 @@ void list_t__map_ptrs(list_t * a, void (*f)(void *))
 
 int main()
 {
-    cgc_init();
-
     cgc_scope_start();
+
     cgc_scope_declare(list_t *, a);
     cgc_scope_declare(list_t *, b);
     cgc_scope_declare(list_t *, c);
@@ -39,8 +38,10 @@ int main()
     c->tail = NULL;
 
     cgc_assign(&a->tail, b);
-    //cgc_assign(&b->tail, c);
-    cgc_assign(&c->tail, a);
+    cgc_assign(&b->tail, c);
+    //cgc_assign(&c->tail, a);
+    
+    cgc_collect();
 
     cgc_scope_end();
 
