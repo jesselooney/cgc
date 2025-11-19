@@ -10,20 +10,20 @@ ifdef DBG
 	CFLAGS += -g
 endif
 
-bin/arc: main.c $(HEADERS)
+GC ?= ARC
+BIN = bin/$(GC)
+
+$(BIN): main.c $(HEADERS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -DGC_ARC main.c -o $@
+	$(CC) $(CFLAGS) -DGC_$(GC) main.c -o $@
 
-bin/trc: main.c $(HEADERS)
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -DGC_TRC main.c -o $@
+run: $(BIN)
+	./$(BIN)
 
-run: bin/arc
-	./bin/arc
-
-runt : bin/trc
-	./bin/trc
-
+vis: $(BIN)
+	./$(BIN)
+	@TEST=$$(find reports/*.csv | sort | tail -n 1); \
+	python3 vis.py $$TEST
 
 clean:
 	rm -r bin
