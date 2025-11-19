@@ -20,7 +20,7 @@ df = pl.read_csv(args.csv, schema=schema)\
     .with_columns(
         pl.col("ns").diff().alias("latency")
     )\
-    .tail(10000)\
+    .tail(1000)\
 
 fig, axs = plt.subplots(nrows=3, sharex=True, figsize=(6, 12))
 

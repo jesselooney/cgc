@@ -33,25 +33,10 @@ void iterate() {
 }
 
 int main() {
-    FILE *f;
-
-    time_t rawtime;
-    struct tm *info;
-    char buf[27];
-    time(&rawtime);
-    info = localtime(&rawtime); 
-    strftime(buf, sizeof(buf), "reports/%y%m%d-%H%M%S.csv", info);
-
-    f = fopen(buf, "w");
-    cgc_monitor_register_outfile(f);
-
     cgc_scope_start();
     for (int i = 0; i < 1000; i++) {
         iterate();
-        cgc_monitor_write_state();
     }
     cgc_scope_end();
-
-    fclose(f);
     return 0;
 }

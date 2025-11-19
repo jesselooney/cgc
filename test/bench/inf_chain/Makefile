@@ -18,6 +18,7 @@ $(BIN): main.c $(HEADERS)
 	@mkdir -p ./reports
 	$(CC) $(CFLAGS) -DGC_$(GC) main.c -o $@
 
+# run (no monitoring)
 run: $(BIN)
 	./$(BIN)
 
@@ -29,16 +30,19 @@ clean:
 #####
 
 PYTHON = ./venv/bin/python
+TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
+OUTFILE := reports/$(TIMESTAMP).csv
 
 venv: 
 	test -d venv || python3 -m venv venv
 	$(PYTHON) -m pip install -r requirements.txt -q
 
+# run and visualize
 rvis: $(BIN) venv
-	./$(BIN)
-	TEST=$$(find reports/*.csv | sort | tail -n 1); \
-	$(PYTHON) vis.py $$TEST
+	CGC_OUTPATH=$(OUTFILE) ./$(BIN)
+	$(PYTHON) vis.py $(OUTFILE)
 
+# most recent
 vis: venv
 	TEST=$$(find reports/*.csv | sort | tail -n 1); \
 	$(PYTHON) vis.py $$TEST

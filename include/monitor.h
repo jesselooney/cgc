@@ -11,11 +11,11 @@
 // Members
 // ==============================================
 
-FILE *outfile;
-struct timespec start;
+static FILE *outfile;
+static struct timespec start;
+static bool enabled = false;
 
 void cgc_monitor_write_state();
-void cgc_monitor_register_outfile(FILE * f);
 
 void monitor_init();
 void monitor_end();
@@ -33,17 +33,23 @@ size_t GC_TOTAL_PTR_ASSIGNS;
 
 void monitor_init()
 {
-    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    const char* outpath = getenv("CGC_OUTPATH");
+    if (outpath) {
+        enabled = true;
+        outfile = fopen(outpath, "w");
+        if (outfile == NULL) {
+            perror("death and bad (error opening outfile csv)");
+            exit(1);
+        }
+        clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+    }
 }
 
 void monitor_end()
 {
-    
-}
-
-void cgc_monitor_register_outfile(FILE * f)
-{
-    outfile = f;
+    if (enabled) {
+        fclose(outfile);
+    }
 }
 
 void cgc_monitor_write_state()
@@ -53,7 +59,7 @@ void cgc_monitor_write_state()
 
 void monitor_write_state()
 {
-    if (outfile != NULL) {
+    if (enabled) {
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC_RAW, &now);
         time_t nsec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
