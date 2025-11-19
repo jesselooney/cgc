@@ -39,7 +39,10 @@ venv:
 
 # run and visualize
 rvis: $(BIN) venv
-	CGC_OUTPATH=$(OUTFILE) ./$(BIN)
+	CGC_OUTPATH=$(OUTFILE) \
+	CGC_POOL_EXP=10 \
+	CGC_HEAP_EXP=10 \
+	./$(BIN)
 	$(PYTHON) vis.py $(OUTFILE)
 
 # most recent

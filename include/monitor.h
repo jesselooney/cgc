@@ -77,7 +77,7 @@ void monitor_write_state()
             ALLOC_ALLOCATED_POOLS,
             GC_TOTAL_PTR_ASSIGNS
         );
-        fflush(outfile);
+        //fflush(outfile);
     }
 }
 

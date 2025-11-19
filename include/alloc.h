@@ -16,24 +16,25 @@
 //===============================================
 
 // active parameters
-#define ALLOC_POOL_SIZE_EXP 10
-#define ALLOC_HEAP_SIZE_EXP 10
+int ALLOC_POOL_SIZE_EXP;
+int ALLOC_HEAP_SIZE_EXP;
 
-#define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
-#define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
-#define ALLOC_MIN_BLOCK_COUNT_EXP 3
-#define ALLOC_MAX_BLOCK_COUNT_EXP 6
-#define ALLOC_MIN_BLOCK_SIZE_EXP 5
-#define ALLOC_MAX_BLOCK_SIZE_EXP (ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP)
+size_t ALLOC_POOL_SIZE;
+size_t ALLOC_HEAP_SIZE;
+int ALLOC_MIN_BLOCK_COUNT_EXP;
+int ALLOC_MAX_BLOCK_COUNT_EXP;
+int ALLOC_MIN_BLOCK_SIZE_EXP;
+int ALLOC_MAX_BLOCK_SIZE_EXP;
 
-static void *ALLOC_FREE_LISTS[ALLOC_MAX_BLOCK_SIZE_EXP] = { NULL };
+// todo, 32?
+static void *ALLOC_FREE_LISTS[32] = { NULL };
 
 static void *ALLOC_HEAP_START = NULL;
 static void *ALLOC_HEAP_TOP = NULL;
 
 typedef struct {
     size_t block_size;
-    uint8_t data[ALLOC_POOL_SIZE - sizeof(size_t)];
+    uint8_t data[];
 } pool_t;
 
 typedef void block_t;
@@ -84,6 +85,28 @@ size_t ALLOC_ALLOCATED_POOLS = 0;
 void alloc_init()
 {
     log_info("alloc_init()");
+
+    const char* env_pool_exp = getenv("CGC_POOL_EXP");
+    if (env_pool_exp == NULL) {
+        ALLOC_POOL_SIZE_EXP = 16;
+    } else {
+        ALLOC_POOL_SIZE_EXP = atoi(env_pool_exp);
+    }
+
+    const char* env_heap_exp = getenv("CGC_HEAP_EXP");
+    if (env_pool_exp == NULL) {
+        ALLOC_HEAP_SIZE_EXP = 30;
+    } else {
+        ALLOC_HEAP_SIZE_EXP = atoi(env_heap_exp);
+    }
+
+    ALLOC_POOL_SIZE = 1 << ALLOC_POOL_SIZE_EXP;
+    ALLOC_HEAP_SIZE = 1 << ALLOC_HEAP_SIZE_EXP;
+    ALLOC_MIN_BLOCK_COUNT_EXP = 3;
+    ALLOC_MAX_BLOCK_COUNT_EXP = 6;
+    ALLOC_MIN_BLOCK_SIZE_EXP = 5;
+    ALLOC_MAX_BLOCK_SIZE_EXP = ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP;
+
     void *ptr = mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE,
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
