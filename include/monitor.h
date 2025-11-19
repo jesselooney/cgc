@@ -53,21 +53,22 @@ void cgc_monitor_write_state()
 
 void monitor_write_state()
 {
-    struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-    time_t nsec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
-        (now.tv_nsec - start.tv_nsec);
-    fprintf(
-        outfile, 
-        "%ld, %ld, %ld, %ld, %ld\n",
-        nsec_elapsed, 
-        ALLOC_ALLOCATED_BLOCKS, 
-        ALLOC_ALLOCATED_BYTES,
-        ALLOC_ALLOCATED_POOLS,
-        GC_TOTAL_PTR_ASSIGNS
-    );
-    fflush(outfile);
-
+    if (outfile != NULL) {
+        struct timespec now;
+        clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+        time_t nsec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
+            (now.tv_nsec - start.tv_nsec);
+        fprintf(
+            outfile, 
+            "%ld, %ld, %ld, %ld, %ld\n",
+            nsec_elapsed, 
+            ALLOC_ALLOCATED_BLOCKS, 
+            ALLOC_ALLOCATED_BYTES,
+            ALLOC_ALLOCATED_POOLS,
+            GC_TOTAL_PTR_ASSIGNS
+        );
+        fflush(outfile);
+    }
 }
 
 
