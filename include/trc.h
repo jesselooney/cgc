@@ -18,12 +18,12 @@
 stack_t *SEARCH_STACK = NULL;
 
 typedef struct {
-    void (*map_ptrs)(void *, void (*f)(void *));
+    void (*map_ptrs)(void *, void(*f)(void *));
 } _trc_header_t;
 
 void trc_init();
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void (*f)(void *)));
+               void (*map_ptrs)(void *, void(*f)(void *)));
 void trc_collect();
 
 static void _trc_mark();
@@ -42,9 +42,9 @@ void trc_init()
 }
 
 void trc_alloc(void **p, size_t size,
-               void (*map_ptrs)(void *, void (*f)(void *)))
+               void (*map_ptrs)(void *, void(*f)(void *)))
 {
-    if(p == NULL) {
+    if (p == NULL) {
         log_error
             ("Passed NULL to trc_alloc (did you mean to pass &p instead of p?)");
         exit(1);
@@ -103,11 +103,11 @@ void _trc_mark()
 
         // Mark that we found a path from the root set to `visiting`.
         alloc_set_mark_bit(visiting);
-        
+
         _trc_header_t *header = visiting - sizeof(_trc_header_t);
 
         // Push the pointers contained in `visiting` onto the search stack.
-        (*header->map_ptrs)(visiting, _trc_push_to_search_stack);
+        (*header->map_ptrs) (visiting, _trc_push_to_search_stack);
     }
 
     log_info("trc_mark(...) == void");
