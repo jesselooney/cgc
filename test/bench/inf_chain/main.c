@@ -33,7 +33,6 @@ void iterate() {
 }
 
 int main() {
-
     FILE *f;
 
     time_t rawtime;
@@ -47,15 +46,12 @@ int main() {
     cgc_monitor_register_outfile(f);
 
     cgc_scope_start();
-
     for (int i = 0; i < 1000; i++) {
         iterate();
         cgc_monitor_write_state();
     }
-
     cgc_scope_end();
 
     fclose(f);
-
     return 0;
 }

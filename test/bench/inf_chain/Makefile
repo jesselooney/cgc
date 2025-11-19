@@ -15,17 +15,30 @@ BIN = bin/$(GC)
 
 $(BIN): main.c $(HEADERS)
 	@mkdir -p $(@D)
+	@mkdir -p ./reports
 	$(CC) $(CFLAGS) -DGC_$(GC) main.c -o $@
 
 run: $(BIN)
 	./$(BIN)
 
-vis: $(BIN)
-	./$(BIN)
-	TEST=$$(find reports/*.csv | sort | tail -n 1); \
-	python3 vis.py $$TEST
-
 clean:
 	rm -r bin
 
-.PHONY: clean run arc trc
+.PHONY: run vis clean venv
+
+#####
+
+PYTHON = ./venv/bin/python
+
+venv: 
+	test -d venv || python3 -m venv venv
+	$(PYTHON) -m pip install -r requirements.txt -q
+
+rvis: $(BIN) venv
+	./$(BIN)
+	TEST=$$(find reports/*.csv | sort | tail -n 1); \
+	$(PYTHON) vis.py $$TEST
+
+vis: venv
+	TEST=$$(find reports/*.csv | sort | tail -n 1); \
+	$(PYTHON) vis.py $$TEST
