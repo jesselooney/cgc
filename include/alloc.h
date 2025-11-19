@@ -9,14 +9,15 @@
 #include <string.h>
 
 #include "debug.h"
+#include "monitor.h"
 
 //===============================================
 // Members
 //===============================================
 
 // active parameters
-#define ALLOC_POOL_SIZE_EXP 16
-#define ALLOC_HEAP_SIZE_EXP 30
+#define ALLOC_POOL_SIZE_EXP 10
+#define ALLOC_HEAP_SIZE_EXP 10
 
 #define ALLOC_POOL_SIZE (1 << ALLOC_POOL_SIZE_EXP)
 #define ALLOC_HEAP_SIZE (1 << ALLOC_HEAP_SIZE_EXP)
@@ -69,8 +70,9 @@ typedef struct {
 static _log2_ceil_return_t _alloc_log2_ceil(size_t size);
 
 // monitor members
-int ALLOC_NUM_ALLOCATED_BLOCKS = 0;
-size_t ALLOC_SIZE_OF_ALLOCATED_MEMORY = 0;
+size_t ALLOC_ALLOCATED_BYTES = 0;
+size_t ALLOC_ALLOCATED_BLOCKS = 0;
+size_t ALLOC_ALLOCATED_POOLS = 0;
 
 //===============================================
 // Definitions
@@ -147,10 +149,13 @@ void *alloc_new(size_t size)
     // Mark `block` as occupied.
     _alloc_clear_free_bit(block);
 
-    log_info("alloc_new(...) == %p", block);
+    // mon ============
+    ALLOC_ALLOCATED_BLOCKS += 1;
+    ALLOC_ALLOCATED_BYTES += block_size;
+    monitor_write_state();
+    // mon ============
 
-    ALLOC_NUM_ALLOCATED_BLOCKS += 1;
-    ALLOC_SIZE_OF_ALLOCATED_MEMORY += block_size;
+    log_info("alloc_new(...) == %p", block);
     return block;
 }
 
@@ -180,10 +185,13 @@ void alloc_del_by_id(pool_t * pool, size_t block_id)
     *((void **) block) = ALLOC_FREE_LISTS[index];
     ALLOC_FREE_LISTS[index] = block;
 
-    log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
+    // mon ============
+    ALLOC_ALLOCATED_BLOCKS -= 1;
+    ALLOC_ALLOCATED_BYTES -= pool->block_size;
+    monitor_write_state();
+    // mon ============
 
-    ALLOC_NUM_ALLOCATED_BLOCKS -= 1;
-    ALLOC_SIZE_OF_ALLOCATED_MEMORY -= pool->block_size;
+    log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 }
 
 bool alloc_get_mark_bit(void *block)
@@ -273,6 +281,7 @@ static void *_alloc_new_pool(size_t block_size)
     }
 
     log_info("_alloc_new_pool(...) == %p", prev);
+    ALLOC_ALLOCATED_POOLS += 1;
     return prev;
 }
 

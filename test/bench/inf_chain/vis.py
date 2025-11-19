@@ -16,7 +16,7 @@ schema = {
     "pools" : pl.Int32,
     "ptrassigns" : pl.Int32,
 }
-df = pl.read_csv(args.csv, schema=schema).tail(50)
+df = pl.read_csv(args.csv, schema=schema).tail(100)
 
 sns.lineplot(data=df, x="ns", y="bytes")
 

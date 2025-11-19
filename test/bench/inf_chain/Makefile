@@ -22,7 +22,7 @@ run: $(BIN)
 
 vis: $(BIN)
 	./$(BIN)
-	@TEST=$$(find reports/*.csv | sort | tail -n 1); \
+	TEST=$$(find reports/*.csv | sort | tail -n 1); \
 	python3 vis.py $$TEST
 
 clean:

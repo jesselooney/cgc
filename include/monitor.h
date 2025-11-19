@@ -20,6 +20,11 @@ void cgc_monitor_register_outfile(FILE * f);
 void monitor_init();
 void monitor_write_state();
 
+// forward declarations
+size_t ALLOC_ALLOCATED_BYTES;
+size_t ALLOC_ALLOCATED_BLOCKS;
+size_t ALLOC_ALLOCATED_POOLS;
+
 // ==============================================
 // Definitions
 // ==============================================
@@ -38,11 +43,10 @@ void cgc_monitor_write_state()
 {
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-    time_t sec_elapsed = (now.tv_sec - start.tv_sec) * 1000000 +
-        (now.tv_nsec - start.tv_nsec) / 1000;
-    fprintf(outfile, "%ld, %d, %ld\n",
-            sec_elapsed,
-            ALLOC_NUM_ALLOCATED_BLOCKS, ALLOC_SIZE_OF_ALLOCATED_MEMORY);
+    time_t sec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
+        (now.tv_nsec - start.tv_nsec);
+    fprintf(outfile, "%ld, %ld, %ld\n",
+            sec_elapsed, ALLOC_ALLOCATED_BLOCKS, ALLOC_ALLOCATED_BYTES);
     fflush(outfile);
 }
 
