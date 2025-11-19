@@ -29,8 +29,6 @@ void push(list_t **list, int x) {
 
 int main()
 {
-    cgc_init();
-
     cgc_scope_start();
 
     cgc_scope_declare(list_t *, list);

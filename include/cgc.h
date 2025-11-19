@@ -10,11 +10,21 @@
 
 #include "ptr_stack.h"
 
-#define cgc_scope_start(...) ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), ## __VA_ARGS__)
+#define cgc_scope_start(...) \
+{\
+    if (PTR_STACK == NULL) {\
+        _cgc_init();\
+    }\
+    ptr_stack_scope_start(ARG_COUNT(__VA_ARGS__), ## __VA_ARGS__);\
+}
 #define cgc_scope_declare(T, N) T N = NULL; ptr_stack_push(&N);
-#define cgc_scope_end() ptr_stack_scope_end()
-
-#define cgc_init() _cgc_init()
+#define cgc_scope_end() \
+{\
+    ptr_stack_scope_end();\
+    if (PTR_STACK->top == 0) {\
+        _cgc_end();\
+    }\
+}
 #define cgc_collect() _cgc_collect()
 
 #endif

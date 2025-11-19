@@ -14,7 +14,6 @@ void list_t__map_ptrs(list_t *a, void (*f)(void *))
 
 int main()
 {
-    cgc_init();
     cgc_scope_start();
     cgc_scope_declare(list_t *, a);
     cgc_collect();
