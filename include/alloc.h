@@ -143,11 +143,10 @@ void *alloc_new(size_t size)
     log_debug("next_block == %p", next_block);
     ALLOC_FREE_LISTS[index] = next_block;
 
-    // Null out `block`'s pointer into the free list so we don't give the user
-    // easy access to the free list.
-    *((block_t **) block) = NULL;
+    // Initialize the block's memory for safety.
+    memset(block, 0, block_size);
 
-    // Mark `block` as occupied before returning it to the user.
+    // Mark `block` as occupied.
     _alloc_clear_free_bit(block);
 
     // mon ============
