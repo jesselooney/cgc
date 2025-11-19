@@ -16,8 +16,18 @@ schema = {
     "pools" : pl.Int32,
     "ptrassigns" : pl.Int32,
 }
-df = pl.read_csv(args.csv, schema=schema).tail(100)
+df = pl.read_csv(args.csv, schema=schema)\
+    .with_columns(
+        pl.col("ns").diff().alias("latency")
+    )\
+    .tail(10000)\
 
-sns.lineplot(data=df, x="ns", y="bytes")
+fig, axs = plt.subplots(nrows=3, sharex=True, figsize=(6, 12))
+
+sns.lineplot(data=df, x="ns", y="bytes", ax=axs[0])
+sns.lineplot(data=df, x="ns", y="latency", ax=axs[1])
+sns.lineplot(data=df, x="ns", y="ptrassigns", ax=axs[2])
+
+fig.tight_layout()
 
 plt.savefig("out.png")
