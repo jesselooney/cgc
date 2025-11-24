@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #include "debug.h"
 #include "monitor.h"
@@ -99,6 +100,8 @@ void alloc_init()
     } else {
         ALLOC_HEAP_SIZE_EXP = atoi(env_heap_exp);
     }
+
+    assert(ALLOC_POOL_SIZE_EXP <= ALLOC_HEAP_SIZE_EXP);
 
     ALLOC_POOL_SIZE = 1 << ALLOC_POOL_SIZE_EXP;
     ALLOC_HEAP_SIZE = 1 << ALLOC_HEAP_SIZE_EXP;
@@ -262,9 +265,9 @@ static void *_alloc_new_pool(size_t block_size)
     log_info("_alloc_new_pool(%ld)", block_size);
 
     log_debug("ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
-    log_debug("ALLOC_POOL_SIZE == %d", ALLOC_POOL_SIZE);
+    log_debug("ALLOC_POOL_SIZE == %ld", ALLOC_POOL_SIZE);
     log_debug("ALLOC_HEAP_START == %p", ALLOC_HEAP_START);
-    log_debug("ALLOC_HEAP_SIZE == %d", ALLOC_HEAP_SIZE);
+    log_debug("ALLOC_HEAP_SIZE == %ld", ALLOC_HEAP_SIZE);
     if (ALLOC_HEAP_TOP + ALLOC_POOL_SIZE >
         ALLOC_HEAP_START + ALLOC_HEAP_SIZE) {
         log_info("cannot allocate new pool");

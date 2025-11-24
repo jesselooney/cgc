@@ -25,7 +25,7 @@ run: $(BIN)
 clean:
 	rm -r bin
 
-.PHONY: run vis clean venv
+.PHONY: run vis clean venv rvis vis
 
 #####
 
@@ -42,6 +42,7 @@ rvis: $(BIN) venv
 	CGC_OUTPATH=$(OUTFILE) \
 	CGC_POOL_EXP=10 \
 	CGC_HEAP_EXP=10 \
+	taskset --cpu-list 1 \
 	./$(BIN)
 	$(PYTHON) vis.py $(OUTFILE)
 
