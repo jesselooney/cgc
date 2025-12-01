@@ -99,7 +99,7 @@ void monitor_write_state()
             (now.tv_nsec - start.tv_nsec);
 
         _monitor_buffer_write(
-            "%ld, %ld, %ld, %ld, %ld\n",
+            "heapstate,%ld,%ld,%ld,%ld,%ld\n",
             nsec_elapsed, 
             ALLOC_ALLOCATED_BLOCKS, 
             ALLOC_ALLOCATED_BYTES,
