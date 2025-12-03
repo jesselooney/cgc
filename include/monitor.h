@@ -8,8 +8,6 @@
 
 #include "alloc.h"
 
-#define MONITOR_BUFFER_SIZE 100000
-
 // ==============================================
 // Members
 // ==============================================
@@ -18,7 +16,7 @@ static FILE *outfile;
 static struct timespec start;
 static bool enabled = false;
 
-#define bufsize 100000
+#define bufsize 10000
 char logbuf[bufsize];
 int bufpos = 0;
 
@@ -51,7 +49,14 @@ void monitor_init()
             perror("death and bad (error opening outfile csv)");
             exit(1);
         }
-        //setvbuf(outfile, NULL, _IOFBF, 100000000);
+        #ifdef GC_ARC
+        char* gc_select = "arc"; 
+        #endif
+        #ifdef GC_TRC
+        char* gc_select = "trc"; 
+        #endif
+        
+        fprintf(outfile, "metadata,%s\n", gc_select);
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
     }
 }
@@ -71,17 +76,18 @@ void _monitor_buffer_write(char* line, ...)
     va_start(args, line);
     va_copy(args2, args);
 
+    int old_bufpos = bufpos;
     if ((bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args)) < 0) {
         log_error("death and bad (printf encoding error)");
         exit(-1);
     }
     if (bufpos > bufsize) {
+        // avoid reading the truncated daata
+        logbuf[old_bufpos] = '\0';
+        // print the buffer to the file
         fprintf(outfile, "%s\n", logbuf);
-        memset(logbuf, 0, sizeof(logbuf));
-        if ((bufpos = vsnprintf(logbuf, bufsize, line, args2)) < 0) {
-            log_error("death and bad (printf encoding error)");
-            exit(-1);
-        }
+        // now print the line that just failed
+        bufpos = vsnprintf(logbuf, bufsize, line, args2);
     }
 
     va_end(args);
