@@ -110,7 +110,7 @@ static void _arc_inc(void *p)
 
     _arc_header_t *header = _arc_get_header_ptr(p);
     header->ref_count++;
-    log_debug("ref_count++ == %ld", header->ref_count);
+    log_debug("ref_count++ == %lu", header->ref_count);
     log_info("_arc_inc(...) == void");
 }
 
@@ -119,14 +119,17 @@ static void _arc_dec(void *p)
     log_info("_arc_dec(%p)", p);
 
     _arc_header_t *header = _arc_get_header_ptr(p);
-    header->ref_count--;
-    log_debug("ref_count-- == %ld", header->ref_count);
 
-    if (header->ref_count <= 0) {
+    header->ref_count--;
+    log_debug("--ref_count == %lu", header->ref_count);
+
+    if (header->ref_count == 0) {
         log_info("no references remain; freeing block");
         if (header->map_ptrs != NULL) {
-            log_info("calling user map_ptrs to deregister child pointers");
-            (*header->map_ptrs) (p, arc_deregister);
+                log_debug("header->map_ptrs == %p", header->map_ptrs);
+                log_info("calling map_ptrs to deregister child pointers");
+                (*header->map_ptrs) (p, arc_deregister);
+                log_info("finished call to map_ptrs");
         }
         log_trace("f %p", p);
         alloc_del(header);

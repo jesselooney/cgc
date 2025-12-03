@@ -99,15 +99,18 @@ void _trc_mark()
 
         log_info("visiting heap object at %p", visiting);
 
-        // TODO: skip if already marked.
-
         // Mark that we found a path from the root set to `visiting`.
         alloc_set_mark_bit(visiting);
 
         _trc_header_t *header = visiting - sizeof(_trc_header_t);
 
-        // Push the pointers contained in `visiting` onto the search stack.
-        (*header->map_ptrs) (visiting, _trc_push_to_search_stack);
+        log_debug("header->map_ptrs == %p", header->map_ptrs);
+        if (header->map_ptrs != NULL) {
+            log_info("calling map_ptrs to find child pointers");
+            // Push the pointers contained in `visiting` onto the search stack.
+            (*header->map_ptrs) (visiting, _trc_push_to_search_stack);
+            log_info("finished call to map_ptrs");
+        }
     }
 
     log_info("trc_mark(...) == void");
@@ -115,10 +118,11 @@ void _trc_mark()
 
 static void _trc_push_to_search_stack(void *p)
 {
-    log_info("_trc_push_to_search_stack(%p", p);
+    log_info("_trc_push_to_search_stack(%p)", p);
 
     if (_trc_is_heap_ptr(p)) {
         if (!alloc_get_mark_bit(p)) {
+            log_info("pushing pointer %p", p);
             stack_push(SEARCH_STACK, (void **) p);
         } else {
             log_info("already marked; skipping");

@@ -1,8 +1,11 @@
 #ifndef _MONITOR_H_
 #define _MONITOR_H_
 
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
+
 #include "alloc.h"
 
 // ==============================================
