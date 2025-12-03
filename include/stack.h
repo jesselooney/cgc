@@ -63,14 +63,17 @@ void stack_drop(stack_t * s)
 static void _stack_grow(stack_t * s)
 {
     log_info("_stack_grow(%p)", s);
+
     size_t new_max_size = s->max_size * 2;
     void ***new_items = malloc(sizeof(void **) * new_max_size);
 
-    memcpy(s->items, new_items, sizeof(void **) * s->top);
+    memcpy(new_items, s->items, sizeof(void **) * s->top);
     free(s->items);
 
     s->max_size = new_max_size;
     s->items = new_items;
+
+    log_info("_stack_grow(...) == void");
 }
 
 #endif

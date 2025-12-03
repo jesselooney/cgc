@@ -27,6 +27,7 @@ static void _cgc_collect();
 
 #define cgc_alloc(P, T) gc_alloc(P, T)
 #define cgc_assign(P, Q) gc_assign(P, Q)
+#define cgc_array(P, T, N) gc_array(P, T, N)
 #define cgc_scope_declare(T, N) T N = NULL; ptr_stack_push(&N);
 #define cgc_collect() _cgc_collect()
 
