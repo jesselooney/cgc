@@ -1,8 +1,11 @@
+# c setup
 CC = gcc
 CGC_LIB = ../../../include
 HEADERS = $(wildcard $(CGC_LIB)/*)
-CFLAGS += -I $(CGC_LIB) 
+CFLAGS += -I $(CGC_LIB)
 CFLAGS += -Wno-incompatible-pointer-types
+
+# cgc debug options
 ifdef V
 	CFLAGS += -DVERBOSITY=$(V)
 endif
@@ -10,51 +13,60 @@ ifdef DBG
 	CFLAGS += -g
 endif
 
-GC ?= ARC
-BIN = bin/$(GC)
+#################################
+# BUILDING
 
-.PHONY: run vis clean venv rrun rvis vis both
+BIN = bin
+SOURCE = main.c
+TARGETS = $(BIN)/ARC $(BIN)/TRC
 
-$(BIN): main.c $(HEADERS)
+.PHONY: default
+
+default: $(TARGETS)
+
+$(BIN)/ARC: $(SOURCE) $(HEADERS)
 	@mkdir -p $(@D)
 	@mkdir -p ./reports
-	$(CC) $(CFLAGS) -DGC_$(GC) main.c -o $@
+	$(CC) $(CFLAGS) -DGC_ARC main.c -o $@
 
-both:
-	$(MAKE) GC=ARC
-	$(MAKE) GC=TRC
-
-# run (no monitoring)
-run: $(BIN)
-	./$(BIN)
+$(BIN)/TRC: $(SOURCE) $(HEADERS)
+	@mkdir -p $(@D)
+	@mkdir -p ./reports
+	$(CC) $(CFLAGS) -DGC_TRC main.c -o $@
 
 clean:
 	rm -r bin
 
-#####
+#################################
+# RUNNING
 
-PYTHON = ./venv/bin/python
-TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
-OUTFILE := reports/$(TIMESTAMP).csv
-
-rrun: $(BIN)
-	CGC_OUTPATH=$(OUTFILE) \
-	./$(BIN)
-
-venv: 
-	test -d venv || python3 -m venv venv
-	$(PYTHON) -m pip install -r requirements.txt -q
-
-# run and visualize
-rvis: $(BIN) venv
+ra_bench: $(TARGETS)
 	CGC_OUTPATH=$(OUTFILE) \
 	CGC_POOL_EXP=10 \
 	CGC_HEAP_EXP=10 \
 	taskset --cpu-list 1 \
-	./$(BIN)
-	$(PYTHON) vis.py $(OUTFILE)
+	$(BIN)/ARC
 
-# most recent
-vis: venv
-	TEST=$$(find reports/*.csv | sort | tail -n 1); \
-	$(PYTHON) vis.py $$TEST
+rt_bench: $(TARGETS)
+	CGC_OUTPATH=$(OUTFILE) \
+	CGC_POOL_EXP=10 \
+	CGC_HEAP_EXP=10 \
+	taskset --cpu-list 1 \
+	$(BIN)/TRC
+
+#################################
+# PYTHON
+
+PYTHON = ./venv/bin/python
+venv: 
+	test -d venv || python3 -m venv venv
+	$(PYTHON) -m pip install -r requirements.txt -q
+
+# run + visualize, comparative (between arc and trc)
+TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
+rvc: $(TARGETS)
+	ARC_OUT=reports/arc_$(TIMESTAMP).csv ; \
+	TRC_OUT=reports/trc_$(TIMESTAMP).csv ; \
+	$(MAKE) ra_bench OUTFILE="$$ARC_OUT" ; \
+	$(MAKE) rt_bench OUTFILE="$$TRC_OUT" ; \
+	$(PYTHON) vis.py $$ARC_OUT $$TRC_OUT

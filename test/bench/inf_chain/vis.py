@@ -12,10 +12,6 @@ import argparse
 # Globals
 
 SCHEMAS = {
-    "metadata": {
-        "gc": pl.String
-    },
-
     "heapstate": {
         "ns": pl.Int64,
         "blocks": pl.Int64,
@@ -34,7 +30,7 @@ SCHEMAS = {
 #   given a csv path, return list of 
 #   1. name and 
 #   2. dfs from each data category found
-def parse_csv(path: str) -> list[str, dict[str, pl.DataFrame]]:
+def parse_csv(path: str) -> dict[str, pl.DataFrame]:
     cats: dict[str, list[list[str]]] = {} # categories of data recording
     with open(path, 'r') as f:
         for line in f:
@@ -54,11 +50,7 @@ def parse_csv(path: str) -> list[str, dict[str, pl.DataFrame]]:
             continue
         out[cat] = pl.from_records(rows, orient="row", schema=SCHEMAS[cat])
     
-    metadata = {
-        "gc": out["metadata"].item(row=0, column="gc")
-    }
-    name = f"{metadata['gc']}_{Path(path).stem}"
-    return name, out
+    return out
 ###############################################################################
 
 
@@ -85,55 +77,38 @@ def plot_heapstate_latency(ax, run: dict[str, pl.DataFrame]):
 ###############################################################################
 # main
 def main():
-    # get variadic num csvs from cmd line
-        # each csv corresponds to its own col on the vis
-    # for each csv, extract each data category
-    # select which vis's to include
-    # export the plot to a png
+    # read in csvs to process
     parser = argparse.ArgumentParser()
     parser.add_argument("inputs", nargs="*")
     args = parser.parse_args()
 
+    # default to the most recent one
     if not args.inputs:
         args.inputs = [f"./reports/{sorted(os.listdir('./reports'))[-1]}"]
 
+    # run_name : { category : <df>, ... }
     runs: dict[
         str, dict[
             str, pl.DataFrame]] = {}
     for csv in args.inputs:
-        name, parsed = parse_csv(csv)
-        runs[name] = parsed
-    
-    # debug print the data dataframes
-    """ for i in runs:
-        print("#########")
-        for j in runs[i]:
-            print(i, ": ", j)
-            print(runs[i][j]) """
-    # ok so now. 
-    # runs = {
-    #   arc_2342 : {
-    #       heapstate : <dataframe>
-    #       ...
-    #   },
-    #   ...
-    # }
-
+        runs[Path(csv).stem] = parse_csv(csv)
 
     # TEMP
     plotters = [
         plot_heapstate_bytes,
         plot_heapstate_latency
     ]
-    num_runs = len(args.inputs)
-    num_vizs = len(plotters)
+    n = len(plotters)
+    m = len(args.inputs)
     
     # create grid of axes based on the # runs passed and the # vizs requested
     fig, axes = plt.subplots(
-        nrows=num_vizs,
-        ncols=num_runs,
-        figsize=(num_runs * 5, num_vizs * 4),
-        squeeze=False
+        nrows=n,
+        ncols=m,
+        figsize=(n * 5, m * 4),
+        squeeze=False,
+        sharex=True,
+        sharey="row"
     )
 
     # populate each spot on the subplot grid with 
@@ -142,15 +117,11 @@ def main():
         for col, run in enumerate(runs):
             ax = axes[row][col]
             plotter(ax, runs[run])
+
             if row == 0:
                 ax.set_title(run)
-            else:
-                ax.set_title("")
-
             if col == 0:
                 ax.set_ylabel(plotter.__name__)
-            else:
-                ax.set_ylabel("")
     
     plt.tight_layout()
     plt.savefig("out.png")
