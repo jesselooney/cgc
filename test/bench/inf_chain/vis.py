@@ -35,13 +35,12 @@ def parse_csv(path: str) -> dict[str, pl.DataFrame]:
     with open(path, 'r') as f:
         for line in f:
             row = line.strip().split(",")
-            if not row[0]: 
-                # empty row prolly
+            if len(row) <= 1:
                 continue
-            if row[0] not in cats:
+            if row[1] not in cats:
                 # first encounter
-                cats[row[0]] = []
-            cats[row[0]].append(row[1:])
+                cats[row[1]] = []
+            cats[row[1]].append([row[0]] + row[2:])
 
     out: dict[str, pl.DataFrame] = {}
     for cat, rows in cats.items():
@@ -68,7 +67,11 @@ def plot_heapstate_bytes(ax, run: dict[str, pl.DataFrame]):
 def plot_heapstate_latency(ax, run: dict[str, pl.DataFrame]):
     heapstate_df = run["heapstate"].with_columns(
         pl.col("ns").diff().alias("latency")
-    )
+    )\
+    
+    """ .filter(
+        pl.col("latency") < 2000
+    ) """
     sns.lineplot(data=heapstate_df, x="ns", y="latency", ax=ax)
 ###############################################################################
 
@@ -93,6 +96,17 @@ def main():
     for csv in args.inputs:
         runs[Path(csv).stem] = parse_csv(csv)
 
+        # debug
+        print(f"In {Path(csv).name}, found these categories:")
+        print(f"    {runs[Path(csv).stem].keys()}")
+
+    # filtering
+    for run in runs.values():
+        for name, df in run.items():
+            pass
+            #run[name] = df.tail(200)
+
+
     # TEMP
     plotters = [
         plot_heapstate_bytes,
@@ -107,7 +121,7 @@ def main():
         ncols=m,
         figsize=(n * 5, m * 4),
         squeeze=False,
-        sharex=True,
+        sharex="col",
         sharey="row"
     )
 

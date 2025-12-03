@@ -34,7 +34,7 @@ void iterate() {
 
 int main() {
     cgc_scope_start();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000000; i++) {
         iterate();
     }
     cgc_scope_end();

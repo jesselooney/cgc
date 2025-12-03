@@ -20,11 +20,15 @@ static bool enabled = false;
 char logbuf[bufsize];
 int bufpos = 0;
 
-void cgc_monitor_write_state();
+// granularity
+#define GRAN_HEAPSTATE 10000
+int c_heapstate = 0;
+
+void cgc_monitor_write_heapstate();
 
 void monitor_init();
 void monitor_end();
-void monitor_write_state();
+void monitor_write_heapstate();
 
 void _monitor_buffer_write(char* line, ...);
 
@@ -72,11 +76,19 @@ void monitor_end()
 
 void _monitor_buffer_write(char* line, ...)
 {
+    // get time elapsed at this write
+    struct timespec now;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &now);
+    time_t nsec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
+        (now.tv_nsec - start.tv_nsec);
+
+    // actual printing
     va_list args, args2;
     va_start(args, line);
     va_copy(args2, args);
 
     int old_bufpos = bufpos;
+    bufpos += snprintf(logbuf + bufpos, bufsize - bufpos, "%ld,", nsec_elapsed);
     if ((bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args)) < 0) {
         log_error("death and bad (printf encoding error)");
         exit(-1);
@@ -87,35 +99,50 @@ void _monitor_buffer_write(char* line, ...)
         // print the buffer to the file
         fprintf(outfile, "%s\n", logbuf);
         // now print the line that just failed
-        bufpos = vsnprintf(logbuf, bufsize, line, args2);
+        bufpos = snprintf(logbuf, bufsize, "##########\n"); // debug to check seams
+        bufpos += snprintf(logbuf + bufpos, bufsize - bufpos, "%ld,", nsec_elapsed);
+        bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args2);
     }
 
     va_end(args);
     va_end(args2);
 }
 
-void cgc_monitor_write_state()
+void cgc_monitor_write_heapstate()
 {
-    monitor_write_state();
+    monitor_write_heapstate();
 }
 
-void monitor_write_state()
+void monitor_write_heapstate()
 {
     if (enabled) {
-        struct timespec now;
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &now);
-        time_t nsec_elapsed = (now.tv_sec - start.tv_sec) * 1000000000 +
-            (now.tv_nsec - start.tv_nsec);
+        // granularity
+        if (c_heapstate < GRAN_HEAPSTATE) {
+            c_heapstate++;
+            return;
+        } 
+        c_heapstate = 0;
+
+        // actually writing
 
         _monitor_buffer_write(
-            "heapstate,%ld,%ld,%ld,%ld,%ld\n",
-            nsec_elapsed, 
+            "heapstate,%ld,%ld,%ld,%ld\n",
             ALLOC_ALLOCATED_BLOCKS, 
             ALLOC_ALLOCATED_BYTES,
             ALLOC_ALLOCATED_POOLS,
             GC_TOTAL_PTR_ASSIGNS
         );
     }
+}
+
+void cgc_monitor_write_user(char* line, ...)
+{
+    va_list args;
+    va_start(args, line);
+
+    _monitor_buffer_write(line, args);
+
+    va_end(args);
 }
 
 

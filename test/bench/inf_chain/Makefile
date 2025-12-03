@@ -65,8 +65,8 @@ venv:
 # run + visualize, comparative (between arc and trc)
 TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
 rvc: $(TARGETS)
-	ARC_OUT=reports/arc_$(TIMESTAMP).csv ; \
-	TRC_OUT=reports/trc_$(TIMESTAMP).csv ; \
+	ARC_OUT=reports/$(TIMESTAMP)_arc.csv ; \
+	TRC_OUT=reports/$(TIMESTAMP)_trc.csv ; \
 	$(MAKE) ra_bench OUTFILE="$$ARC_OUT" ; \
 	$(MAKE) rt_bench OUTFILE="$$TRC_OUT" ; \
 	$(PYTHON) vis.py $$ARC_OUT $$TRC_OUT

@@ -74,7 +74,7 @@ exit(1);
 { \
     _gc_assign(P, Q); \
     GC_TOTAL_PTR_ASSIGNS += 1; \
-    monitor_write_state();\
+    monitor_write_heapstate();\
 }
 
 #ifndef GC_ARC
