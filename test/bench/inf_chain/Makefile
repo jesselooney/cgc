@@ -13,10 +13,16 @@ endif
 GC ?= ARC
 BIN = bin/$(GC)
 
+.PHONY: run vis clean venv rrun rvis vis both
+
 $(BIN): main.c $(HEADERS)
 	@mkdir -p $(@D)
 	@mkdir -p ./reports
 	$(CC) $(CFLAGS) -DGC_$(GC) main.c -o $@
+
+both:
+	$(MAKE) GC=ARC
+	$(MAKE) GC=TRC
 
 # run (no monitoring)
 run: $(BIN)
@@ -25,13 +31,15 @@ run: $(BIN)
 clean:
 	rm -r bin
 
-.PHONY: run vis clean venv rvis vis
-
 #####
 
 PYTHON = ./venv/bin/python
 TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
 OUTFILE := reports/$(TIMESTAMP).csv
+
+rrun: $(BIN)
+	CGC_OUTPATH=$(OUTFILE) \
+	./$(BIN)
 
 venv: 
 	test -d venv || python3 -m venv venv

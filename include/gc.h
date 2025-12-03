@@ -49,4 +49,10 @@ exit(1);
     monitor_write_state();\
 }
 
+#ifndef GC_ARC
+#ifndef GC_TRC
+exit(-1)
+#endif
+#endif
+
 #endif
