@@ -34,8 +34,16 @@ void iterate() {
 
 int main() {
     cgc_scope_start();
-    for (int i = 0; i < 1000000; i++) {
+
+    int total_iterations  = 10000000;
+    int target_recordings = 1000;
+    int threshold = total_iterations / target_recordings;
+
+    for (int i = 0; i < total_iterations; i++) {
         iterate();
+        if (i % threshold == 0) {
+            cgc_monitor_write_user("progress,%d\n", i);
+        }
     }
     cgc_scope_end();
     return 0;

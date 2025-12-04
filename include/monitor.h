@@ -17,11 +17,11 @@ static struct timespec start;
 static bool enabled = false;
 
 #define bufsize 10000
-char logbuf[bufsize];
+char logbuf[bufsize + 1000];
 int bufpos = 0;
 
 // granularity
-#define GRAN_HEAPSTATE 10000
+#define GRAN_HEAPSTATE 100000
 int c_heapstate = 0;
 
 void cgc_monitor_write_heapstate();
@@ -74,7 +74,7 @@ void monitor_end()
     }
 }
 
-void _monitor_buffer_write(char* line, ...)
+void _monitor_buffer_vwrite(char* line, va_list args)
 {
     // get time elapsed at this write
     struct timespec now;
@@ -83,8 +83,7 @@ void _monitor_buffer_write(char* line, ...)
         (now.tv_nsec - start.tv_nsec);
 
     // actual printing
-    va_list args, args2;
-    va_start(args, line);
+    va_list args2;
     va_copy(args2, args);
 
     int old_bufpos = bufpos;
@@ -104,8 +103,15 @@ void _monitor_buffer_write(char* line, ...)
         bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args2);
     }
 
-    va_end(args);
     va_end(args2);
+}
+
+void _monitor_buffer_write(char* line, ...)
+{
+    va_list args;
+    va_start(args, line);
+    _monitor_buffer_vwrite(line, args);
+    va_end(args);
 }
 
 void cgc_monitor_write_heapstate()
@@ -137,12 +143,14 @@ void monitor_write_heapstate()
 
 void cgc_monitor_write_user(char* line, ...)
 {
-    va_list args;
-    va_start(args, line);
-
-    _monitor_buffer_write(line, args);
-
-    va_end(args);
+    if (enabled) {
+        va_list args;
+        va_start(args, line);
+    
+        _monitor_buffer_vwrite(line, args);
+    
+        va_end(args);
+    }
 }
 
 
