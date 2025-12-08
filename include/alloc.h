@@ -54,9 +54,10 @@ static void _alloc_clear_free_bit(block_t * block);
 
 size_t bitvec_size(size_t block_size);
 size_t header_size(size_t block_size);
-pool_t *get_pool(block_t * block);
-int get_block_id(pool_t * pool, block_t * block);
+pool_t *get_pool(void * p);
+size_t get_block_id(pool_t * pool, void * p);
 block_t *get_block_by_id(pool_t * pool, size_t block_id);
+block_t *get_start_of_block(void *p);
 
 int get_bit(uint8_t byte, int index);
 void set_bit(uint8_t * byte_ptr, int index);
@@ -363,20 +364,30 @@ size_t header_size(size_t block_size)
     return sizeof(size_t) + 2 * bitvec_size(block_size);
 }
 
-pool_t *get_pool(block_t * block)
+// Return the pool containing `p`, assuming `p` is in the heap.
+pool_t *get_pool(void *p)
 {
-    return (pool_t *) (((intptr_t) block >> ALLOC_POOL_SIZE_EXP) <<
+    // TODO: use a mask instead of shifting twice
+    return (pool_t *) (((intptr_t) p >> ALLOC_POOL_SIZE_EXP) <<
                        ALLOC_POOL_SIZE_EXP);
 }
 
-int get_block_id(pool_t * pool, block_t * block)
+// Return the ID of the block in `pool` containing `p`, assuming `p` is in `pool`.
+size_t get_block_id(pool_t * pool, void *p)
 {
-    return ((intptr_t) block - (intptr_t) pool) / pool->block_size;
+    return ((intptr_t) p - (intptr_t) pool) / pool->block_size;
 }
 
 block_t *get_block_by_id(pool_t * pool, size_t block_id)
 {
     return (block_t *) (((intptr_t) pool) + (block_id * pool->block_size));
+}
+
+// Return the (start of) the block containing `p`, assuming `p` is in the heap.
+block_t *get_start_of_block(void *p) {
+    pool_t *pool = get_pool(p);
+    size_t block_id = get_block_id(pool, p); 
+    return get_block_by_id(pool, block_id);
 }
 
 int get_bit(uint8_t byte, int index)
