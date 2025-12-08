@@ -93,16 +93,15 @@ void _trc_mark()
 
     // Perform DFS on starting from the root set stack.
     log_info("starting DFS");
-    void *visiting;
     while (SEARCH_STACK->top > 0) {
-        visiting = stack_pop(SEARCH_STACK);
+        _trc_header_t *header = get_start_of_block(stack_pop(SEARCH_STACK));
+
+        void *visiting = (void *) (header + 1);
 
         log_info("visiting heap object at %p", visiting);
 
         // Mark that we found a path from the root set to `visiting`.
         alloc_set_mark_bit(visiting);
-
-        _trc_header_t *header = visiting - sizeof(_trc_header_t);
 
         log_debug("header->map_ptrs == %p", header->map_ptrs);
         if (header->map_ptrs != NULL) {

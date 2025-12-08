@@ -218,7 +218,7 @@ void alloc_del_by_id(pool_t * pool, size_t block_id)
     monitor_write_heapstate();
     // mon ============
 
-    log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
+    log_info("alloc_del_by_id(...) == void");
 }
 
 bool alloc_get_mark_bit(void *block)
