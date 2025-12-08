@@ -108,9 +108,9 @@ static void _arc_inc(void *p)
 {
     log_info("_arc_inc(%p)", p);
 
-    _arc_header_t *header = _arc_get_header_ptr(p);
+    _arc_header_t *header = (_arc_header_t*) get_start_of_block(p);
     header->ref_count++;
-    log_debug("ref_count++ == %lu", header->ref_count);
+    log_debug("++ref_count == %lu", header->ref_count);
     log_info("_arc_inc(...) == void");
 }
 
@@ -118,7 +118,11 @@ static void _arc_dec(void *p)
 {
     log_info("_arc_dec(%p)", p);
 
-    _arc_header_t *header = _arc_get_header_ptr(p);
+    _arc_header_t *header = (_arc_header_t*) get_start_of_block(p);
+    // The start of the "user object" containing `p`. That is, a pointer to the
+    // start of the object as seen from the user's perspective, excluding our
+    // metadata header.
+    void *obj = ((void *) header) + sizeof(_arc_header_t);
 
     header->ref_count--;
     log_debug("--ref_count == %lu", header->ref_count);
@@ -128,10 +132,10 @@ static void _arc_dec(void *p)
         if (header->map_ptrs != NULL) {
                 log_debug("header->map_ptrs == %p", header->map_ptrs);
                 log_info("calling map_ptrs to deregister child pointers");
-                (*header->map_ptrs) (p, arc_deregister);
+                (*header->map_ptrs) (obj, arc_deregister);
                 log_info("finished call to map_ptrs");
         }
-        log_trace("f %p", p);
+        log_trace("f %p", obj);
         alloc_del(header);
     }
 
