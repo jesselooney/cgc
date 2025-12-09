@@ -16,13 +16,13 @@ static FILE *outfile;
 static struct timespec start;
 static bool enabled = false;
 
-#define bufsize 100000
-char logbuf[bufsize + 1000];
-int bufpos = 0;
+int monitor_buffer_size;
+char* monitor_buffer;
+int monitor_buffer_position = 0;
 
 // granularity
-#define GRAN_HEAPSTATE 100000
-int c_heapstate = 0;
+int monitor_granularity_heapstate;
+int monitor_count_heapstate = 0;
 
 void cgc_monitor_write_heapstate();
 
@@ -48,27 +48,51 @@ void monitor_init()
     if (outpath) {
         enabled = true;
         
+        /////// open outpath
         outfile = fopen(outpath, "w");
         if (outfile == NULL) {
             perror("death and bad (error opening outfile csv)");
             exit(1);
         }
+        /////// 
+
+        /////// read env vars
+        const char* monbuf_size = getenv("CGC_MONBUF_SIZE");
+        if (monbuf_size) {
+            monitor_buffer_size = atoi(monbuf_size);
+        } else {
+            monitor_buffer_size = 10000;
+        }
+        monitor_buffer = malloc(sizeof(char) * (monitor_buffer_size + 1000));
+
+        const char* mon_gran_heapstate = getenv("CGC_MON_GRAN_HEAPSTATE");
+        if (mon_gran_heapstate) {
+            monitor_granularity_heapstate = atoi(mon_gran_heapstate);
+        } else {
+            monitor_granularity_heapstate = 100000;
+        }
+        ///////
+        
+        /////// metadata
         #ifdef GC_ARC
         char* gc_select = "arc"; 
         #endif
         #ifdef GC_TRC
         char* gc_select = "trc"; 
         #endif
-        
         fprintf(outfile, "metadata,%s\n", gc_select);
+        ///////
+        
+        /////// record start time
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        /////// 
     }
 }
 
 void monitor_end()
 {
     if (enabled) {
-        fprintf(outfile, "%s", logbuf);
+        fprintf(outfile, "%s", monitor_buffer);
         fflush(outfile);
         fclose(outfile);
     }
@@ -77,9 +101,9 @@ void monitor_end()
 // debugging thing basically
 void monitor_flush_buf()
 {
-    fprintf(outfile, "%s", logbuf);
+    fprintf(outfile, "%s", monitor_buffer);
     fflush(outfile);
-    bufpos = 0;
+    monitor_buffer_position = 0;
 }
 
 void _monitor_buffer_vwrite(char* line, va_list args)
@@ -94,21 +118,21 @@ void _monitor_buffer_vwrite(char* line, va_list args)
     va_list args2;
     va_copy(args2, args);
 
-    int old_bufpos = bufpos;
-    bufpos += snprintf(logbuf + bufpos, bufsize - bufpos, "%ld,", nsec_elapsed);
-    if ((bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args)) < 0) {
+    int old_bufpos = monitor_buffer_position;
+    monitor_buffer_position += snprintf(monitor_buffer + monitor_buffer_position, monitor_buffer_size - monitor_buffer_position, "%ld,", nsec_elapsed);
+    if ((monitor_buffer_position += vsnprintf(monitor_buffer + monitor_buffer_position, monitor_buffer_size - monitor_buffer_position, line, args)) < 0) {
         log_error("death and bad (printf encoding error)");
         exit(-1);
     }
-    if (bufpos > bufsize) {
+    if (monitor_buffer_position > monitor_buffer_size) {
         // avoid reading the truncated data
-        logbuf[old_bufpos] = '\0';
+        monitor_buffer[old_bufpos] = '\0';
         // print the buffer to the file
-        fprintf(outfile, "%s\n", logbuf);
+        fprintf(outfile, "%s\n", monitor_buffer);
         // now print the line that just failed
-        bufpos = snprintf(logbuf, bufsize, "##########\n"); // debug to check seams
-        bufpos += snprintf(logbuf + bufpos, bufsize - bufpos, "%ld,", nsec_elapsed);
-        bufpos += vsnprintf(logbuf + bufpos, bufsize - bufpos, line, args2);
+        monitor_buffer_position = snprintf(monitor_buffer, monitor_buffer_size, "##########\n"); // debug to check seams
+        monitor_buffer_position += snprintf(monitor_buffer + monitor_buffer_position, monitor_buffer_size - monitor_buffer_position, "%ld,", nsec_elapsed);
+        monitor_buffer_position += vsnprintf(monitor_buffer + monitor_buffer_position, monitor_buffer_size - monitor_buffer_position, line, args2);
     }
 
     va_end(args2);
@@ -131,11 +155,11 @@ void monitor_write_heapstate()
 {
     if (enabled) {
         // granularity
-        if (c_heapstate < GRAN_HEAPSTATE) {
-            c_heapstate++;
+        if (monitor_count_heapstate < monitor_granularity_heapstate) {
+            monitor_count_heapstate++;
             return;
         } 
-        c_heapstate = 0;
+        monitor_count_heapstate = 0;
 
         // actually writing
 
