@@ -40,29 +40,36 @@ clean:
 #################################
 # RUNNING
 
+ifndef CGC_POOL_EXP
+CGC_POOL_EXP = 10
+endif
+ifndef CGC_HEAP_EXP
+CGC_HEAP_EXP = 10
+endif
+
 ra: $(TARGETS)
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=$(CGC_POOL_EXP) \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP) \
 	taskset --cpu-list 1 \
 	$(BIN)/ARC
 
 rt: $(TARGETS)
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=$(CGC_POOL_EXP) \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP) \
 	taskset --cpu-list 1 \
 	$(BIN)/TRC
 
 ra_bench: $(TARGETS)
 	CGC_OUTPATH=$(OUTFILE) \
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=$(CGC_POOL_EXP) \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP) \
 	taskset --cpu-list 1 \
 	$(BIN)/ARC
 
 rt_bench: $(TARGETS)
 	CGC_OUTPATH=$(OUTFILE) \
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=$(CGC_POOL_EXP) \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP) \
 	taskset --cpu-list 1 \
 	$(BIN)/TRC
 

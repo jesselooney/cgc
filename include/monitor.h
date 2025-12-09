@@ -16,7 +16,7 @@ static FILE *outfile;
 static struct timespec start;
 static bool enabled = false;
 
-#define bufsize 10000
+#define bufsize 100000
 char logbuf[bufsize + 1000];
 int bufpos = 0;
 
@@ -74,6 +74,14 @@ void monitor_end()
     }
 }
 
+// debugging thing basically
+void monitor_flush_buf()
+{
+    fprintf(outfile, "%s", logbuf);
+    fflush(outfile);
+    bufpos = 0;
+}
+
 void _monitor_buffer_vwrite(char* line, va_list args)
 {
     // get time elapsed at this write
@@ -93,7 +101,7 @@ void _monitor_buffer_vwrite(char* line, va_list args)
         exit(-1);
     }
     if (bufpos > bufsize) {
-        // avoid reading the truncated daata
+        // avoid reading the truncated data
         logbuf[old_bufpos] = '\0';
         // print the buffer to the file
         fprintf(outfile, "%s\n", logbuf);
