@@ -12,6 +12,14 @@ void list_t__map_ptrs(list_t *list, void (*f)(void *))
     (*f) (list->tail);
 }
 
+void list_t_free(list_t *list)
+{
+    if (list->tail != NULL) {
+        list_t_free(list->tail);
+    }
+    cgc_free(list);
+}
+
 void push(list_t **list, int x) {
     cgc_scope_start(&list);
 
@@ -43,6 +51,7 @@ int main()
     cgc_collect();
 
     cgc_scope_end();
+    list_t_free(list);
 
     cgc_collect();
 
