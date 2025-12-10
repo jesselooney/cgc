@@ -38,6 +38,7 @@ int main()
     cgc_collect();
 
     cgc_scope_end();
+    cgc_free(heap_list);
 
     cgc_collect();
 

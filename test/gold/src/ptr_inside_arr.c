@@ -41,13 +41,15 @@ int main()
     // Drop `arr` and `list`.
     cgc_scope_end();
     cgc_collect();
-
+    
     // The objects should be kept alive here by `ptr`.
     log_trace("allocated objects should not have been collected yet");
-
+    
     // Drop `ptr`, making the objects garbage.
     cgc_scope_end();
     cgc_collect();
+    cgc_free(list);
+    cgc_free(arr);
 
     log_trace("allocated objects should have been collected by now");
 

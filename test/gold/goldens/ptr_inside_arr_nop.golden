@@ -1,0 +1,11 @@
+[TRACE]    scope start
+[TRACE]    scope start
+[TRACE]    a < A >
+[TRACE]    a < B >
+[TRACE]    scope end
+[TRACE]    allocated objects should not have been collected yet
+[TRACE]    scope end
+[TRACE]    f < B >
+[TRACE]    f < A >
+[TRACE]    allocated objects should have been collected by now
+

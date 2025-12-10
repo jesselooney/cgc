@@ -34,6 +34,10 @@ void init_arr(list_t ***p) {
     cgc_assign(p, arr);
 
     cgc_scope_end();
+    cgc_free(arr[0]);
+    cgc_free(arr[1]);
+    cgc_free(arr[2]);
+    cgc_free(arr);
 }
 
 int main()
