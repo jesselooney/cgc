@@ -74,12 +74,17 @@ void monitor_init()
         ///////
         
         /////// metadata
+        char* gc_select;
         #ifdef GC_ARC
-        char* gc_select = "arc"; 
+        gc_select = "arc"; 
         #endif
         #ifdef GC_TRC
-        char* gc_select = "trc"; 
+        gc_select = "trc"; 
         #endif
+        #ifdef GC_NOP
+        gc_select = "nop";
+        #endif
+        assert(gc_select != NULL);
         fprintf(outfile, "metadata,%s\n", gc_select);
         ///////
         

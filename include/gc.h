@@ -53,6 +53,7 @@ exit(1);
 #define gc_array(P, T, N) arc_alloc(P, sizeof(T) * N, IS_PTR_TYPE(T) ? gc_ptr_array_map_ptrs: GC_ARRAY_MAP_PTRS)
 #define _gc_assign(P, Q) arc_assign(P, Q)
 #define gc_deregister(P) arc_deregister(P)
+#define gc_free(P)
 
 #endif
 
@@ -67,20 +68,32 @@ exit(1);
 #define gc_alloc(P, T) trc_alloc(P, sizeof(T), T ## __map_ptrs)
 #define gc_array(P, T, N) trc_alloc(P, sizeof(T) * N, IS_PTR_TYPE(T) ? gc_ptr_array_map_ptrs : GC_ARRAY_MAP_PTRS)
 #define _gc_assign(P, Q) ((*P) = (Q))
+#define gc_free(P)
 
 #endif
 
+// ==============================================
+// NOP
+// ==============================================
+#ifdef GC_NOP
+
+#include "nop.h"
+#define gc_deregister(P)
+#define gc_register(P)
+#define gc_alloc(P, T) nop_alloc(P, sizeof(T))
+#define gc_array(P, T, N) nop_alloc(P, sizeof(T) * N)
+#define _gc_assign(P, Q) ((*P) = (Q))
+#define gc_free(P) nop_free(P)
+
+#endif
+
+
+// ==============================================
 #define gc_assign(P, Q) \
 { \
     _gc_assign(P, Q); \
     GC_TOTAL_PTR_ASSIGNS += 1; \
     monitor_write_heapstate();\
 }
-
-#ifndef GC_ARC
-#ifndef GC_TRC
-exit(-1)
-#endif
-#endif
 
 #endif
