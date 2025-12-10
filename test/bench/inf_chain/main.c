@@ -29,6 +29,9 @@ void iterate() {
     cgc_assign(&b->tail, c);
 
     cgc_scope_end();
+    cgc_free(a);
+    cgc_free(b);
+    //cgc_free(c);
     return;
 }
 

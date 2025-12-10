@@ -36,6 +36,9 @@ int main()
     cgc_collect();
 
     cgc_scope_end();
+    cgc_free(a);
+    cgc_free(b);
+    cgc_free(c);
 
     cgc_collect();
 

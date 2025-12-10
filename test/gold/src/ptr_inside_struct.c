@@ -48,6 +48,9 @@ int main()
     cgc_scope_end();
     cgc_collect();
 
+    cgc_free(a);
+    cgc_free(b);
+
     log_trace("allocated objects should have been collected by now");
 
     return 0;

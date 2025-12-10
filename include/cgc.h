@@ -51,6 +51,11 @@ static void _cgc_collect();
 // Definitions
 // ==============================================
 
+void cgc_free(void* p)
+{
+    gc_free(p);
+}
+
 static void _cgc_init()
 {
     ptr_stack_init();
@@ -60,6 +65,9 @@ static void _cgc_init()
 #endif
 #ifdef GC_TRC
     trc_init();
+#endif
+#ifdef GC_NOP
+    nop_init();
 #endif
 }
 
