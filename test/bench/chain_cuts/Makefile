@@ -54,15 +54,15 @@ rt: $(TARGETS)
 
 ra_bench: $(TARGETS)
 	CGC_OUTPATH=$(OUTFILE) \
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=16 \
+	CGC_HEAP_EXP=30 \
 	taskset --cpu-list 1 \
 	$(BIN)/ARC
 
 rt_bench: $(TARGETS)
 	CGC_OUTPATH=$(OUTFILE) \
-	CGC_POOL_EXP=10 \
-	CGC_HEAP_EXP=10 \
+	CGC_POOL_EXP=16 \
+	CGC_HEAP_EXP=30 \
 	taskset --cpu-list 1 \
 	$(BIN)/TRC
 
