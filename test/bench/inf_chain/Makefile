@@ -18,7 +18,7 @@ endif
 
 BIN = bin
 SOURCE = main.c
-TARGETS = $(BIN)/ARC $(BIN)/TRC
+TARGETS = $(BIN)/ARC $(BIN)/TRC $(BIN)/NOP
 
 .PHONY: default
 
@@ -33,6 +33,11 @@ $(BIN)/TRC: $(SOURCE) $(HEADERS)
 	@mkdir -p $(@D)
 	@mkdir -p ./reports
 	$(CC) $(CFLAGS) -DGC_TRC main.c -o $@
+
+$(BIN)/NOP: $(SOURCE) $(HEADERS)
+	@mkdir -p $(@D)
+	@mkdir -p ./reports
+	$(CC) $(CFLAGS) -DGC_NOP main.c -o $@
 
 clean:
 	rm -r bin
@@ -73,6 +78,13 @@ rt_bench: $(TARGETS)
 	taskset --cpu-list 1 \
 	$(BIN)/TRC
 
+rn_bench: $(TARGETS)
+	CGC_OUTPATH=$(OUTFILE) \
+	CGC_POOL_EXP=$(CGC_POOL_EXP) \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP) \
+	taskset --cpu-list 1 \
+	$(BIN)/NOP
+
 #################################
 # PYTHON
 
@@ -86,9 +98,18 @@ TIMESTAMP := $(shell date +"%y%m%d-%H%M%S")
 rvc: $(TARGETS)
 	ARC_OUT=reports/$(TIMESTAMP)_arc.csv ; \
 	TRC_OUT=reports/$(TIMESTAMP)_trc.csv ; \
-	$(MAKE) ra_bench OUTFILE="$$ARC_OUT" || exit 1 ; \
+	NOP_OUT=reports/$(TIMESTAMP)_nop.csv ; \
+	$(MAKE) ra_bench OUTFILE="$$ARC_OUT" || exit 1; \
 	$(MAKE) rt_bench OUTFILE="$$TRC_OUT" || exit 1; \
-	$(PYTHON) vis.py $$ARC_OUT $$TRC_OUT
+	$(MAKE) rn_bench OUTFILE="$$NOP_OUT" || exit 1; \
+	$(PYTHON) vis.py $$ARC_OUT $$TRC_OUT $$NOP_OUT
+
+rvc_tn: $(TARGETS)
+	TRC_OUT=reports/$(TIMESTAMP)_trc.csv ; \
+	NOP_OUT=reports/$(TIMESTAMP)_nop.csv ; \
+	$(MAKE) rt_bench OUTFILE="$$TRC_OUT" || exit 1; \
+	$(MAKE) rn_bench OUTFILE="$$NOP_OUT" || exit 1; \
+	$(PYTHON) vis.py $$TRC_OUT $$NOP_OUT
 
 vc_recent: 
 	FIRST=$$(ls reports | tail -n 2 | head -n 1); \
