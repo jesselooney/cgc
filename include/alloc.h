@@ -179,7 +179,6 @@ void *alloc_new(size_t size)
     // mon ============
     ALLOC_ALLOCATED_BLOCKS += 1;
     ALLOC_ALLOCATED_BYTES += block_size;
-    monitor_write_heapstate();
     // mon ============
 
     log_info("alloc_new(...) == %p", block);
@@ -215,7 +214,6 @@ void alloc_del_by_id(pool_t * pool, size_t block_id)
     // mon ============
     ALLOC_ALLOCATED_BLOCKS -= 1;
     ALLOC_ALLOCATED_BYTES -= pool->block_size;
-    monitor_write_heapstate();
     // mon ============
 
     log_info("alloc_del_by_id(...) == void");
