@@ -51,6 +51,7 @@ void trc_alloc(void **p, size_t size,
     }
     _trc_header_t *header = alloc_new(size + sizeof(intptr_t));
     if (header == NULL) {
+        // todo: this should call logging code for collecting?
         trc_collect();
         header = alloc_new(size + sizeof(intptr_t));
         if (header == NULL) {
