@@ -54,8 +54,8 @@ static void _alloc_clear_free_bit(block_t * block);
 
 size_t bitvec_size(size_t block_size);
 size_t header_size(size_t block_size);
-pool_t *get_pool(void * p);
-size_t get_block_id(pool_t * pool, void * p);
+pool_t *get_pool(void *p);
+size_t get_block_id(pool_t * pool, void *p);
 block_t *get_block_by_id(pool_t * pool, size_t block_id);
 block_t *get_start_of_block(void *p);
 
@@ -88,14 +88,14 @@ void alloc_init()
 {
     log_info("alloc_init()");
 
-    const char* env_pool_exp = getenv("CGC_POOL_EXP");
+    const char *env_pool_exp = getenv("CGC_POOL_EXP");
     if (env_pool_exp == NULL) {
         ALLOC_POOL_SIZE_EXP = 16;
     } else {
         ALLOC_POOL_SIZE_EXP = atoi(env_pool_exp);
     }
 
-    const char* env_heap_exp = getenv("CGC_HEAP_EXP");
+    const char *env_heap_exp = getenv("CGC_HEAP_EXP");
     if (env_pool_exp == NULL) {
         ALLOC_HEAP_SIZE_EXP = 30;
     } else {
@@ -109,7 +109,8 @@ void alloc_init()
     ALLOC_MIN_BLOCK_COUNT_EXP = 3;
     ALLOC_MAX_BLOCK_COUNT_EXP = 6;
     ALLOC_MIN_BLOCK_SIZE_EXP = 5;
-    ALLOC_MAX_BLOCK_SIZE_EXP = ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP;
+    ALLOC_MAX_BLOCK_SIZE_EXP =
+        ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP;
 
     void *ptr = mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE,
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -120,7 +121,9 @@ void alloc_init()
     }
 
     log_debug("ptr == %p", (void *) ptr);
-    ALLOC_HEAP_START = (void *) (ptr + (ALLOC_POOL_SIZE - ((intptr_t) ptr % ALLOC_POOL_SIZE)));
+    ALLOC_HEAP_START =
+        (void *) (ptr +
+                  (ALLOC_POOL_SIZE - ((intptr_t) ptr % ALLOC_POOL_SIZE)));
     ALLOC_HEAP_TOP = ALLOC_HEAP_START;
     log_debug("ALLOC_HEAP_START == ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
     log_info("alloc_init() == void");
@@ -185,7 +188,7 @@ void *alloc_new(size_t size)
     return block;
 }
 
-void alloc_del(block_t * block)
+void alloc_del(block_t *block)
 {
     log_info("alloc_del(%p)", block);
 
@@ -196,7 +199,7 @@ void alloc_del(block_t * block)
     log_info("alloc_del(...) == void");
 }
 
-void alloc_del_by_id(pool_t * pool, size_t block_id)
+void alloc_del_by_id(pool_t *pool, size_t block_id)
 {
     log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
 
@@ -236,7 +239,7 @@ bool alloc_get_mark_bit(void *block)
 // alloc_set_mark_bit(void*)
 //      we have found an object that has a live pointer to it. pass that pointer to the object 
 //      to set its mark bit in the bitmap
-void alloc_set_mark_bit(block_t * block)
+void alloc_set_mark_bit(block_t *block)
 {
     log_info("alloc_set_mark_bit(%p)", block);
     // block is theoretically the pointer to the start of a heap allocated block, but it 
@@ -310,13 +313,13 @@ static void *_alloc_new_pool(size_t block_size)
     return prev;
 }
 
-static void _alloc_set_free_bit_by_id(pool_t * pool, size_t block_id)
+static void _alloc_set_free_bit_by_id(pool_t *pool, size_t block_id)
 {
     uint8_t *resident_byte = &pool->data[block_id / 8];
     set_bit(resident_byte, block_id % 8);
 }
 
-static void _alloc_clear_free_bit(block_t * block)
+static void _alloc_clear_free_bit(block_t *block)
 {
     log_info("_alloc_clear_free_bit(%p)", block);
 
@@ -371,20 +374,21 @@ pool_t *get_pool(void *p)
 }
 
 // Return the ID of the block in `pool` containing `p`, assuming `p` is in `pool`.
-size_t get_block_id(pool_t * pool, void *p)
+size_t get_block_id(pool_t *pool, void *p)
 {
     return ((intptr_t) p - (intptr_t) pool) / pool->block_size;
 }
 
-block_t *get_block_by_id(pool_t * pool, size_t block_id)
+block_t *get_block_by_id(pool_t *pool, size_t block_id)
 {
     return (block_t *) (((intptr_t) pool) + (block_id * pool->block_size));
 }
 
 // Return the (start of) the block containing `p`, assuming `p` is in the heap.
-block_t *get_start_of_block(void *p) {
+block_t *get_start_of_block(void *p)
+{
     pool_t *pool = get_pool(p);
-    size_t block_id = get_block_id(pool, p); 
+    size_t block_id = get_block_id(pool, p);
     return get_block_by_id(pool, block_id);
 }
 
@@ -393,12 +397,12 @@ int get_bit(uint8_t byte, int index)
     return (byte >> index) & 1;
 }
 
-void set_bit(uint8_t * byte_ptr, int index)
+void set_bit(uint8_t *byte_ptr, int index)
 {
     *byte_ptr |= 1 << index;
 }
 
-void clear_bit(uint8_t * byte_ptr, int index)
+void clear_bit(uint8_t *byte_ptr, int index)
 {
     *byte_ptr &= ~(1 << index);
 }

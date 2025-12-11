@@ -20,7 +20,7 @@ void nop_alloc(void **p, size_t size)
     log_trace("a %p", *p);
 }
 
-void nop_free(void* p)
+void nop_free(void *p)
 {
     log_trace("f %p", p);
     free(p);

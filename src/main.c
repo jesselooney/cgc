@@ -11,7 +11,7 @@ typedef struct list {
     struct list *tail;
 } list_t;
 
-void list_t__map_ptrs(list_t * a, void (*f)(void *))
+void list_t__map_ptrs(list_t *a, void (*f)(void *))
 {
     printf("Destroying list with head = %d\n", a->head);
     (*f) (a->tail);
@@ -40,7 +40,7 @@ int main()
     cgc_assign(&a->tail, b);
     cgc_assign(&b->tail, c);
     //cgc_assign(&c->tail, a);
-    
+
     cgc_collect();
 
     cgc_scope_end();

@@ -51,7 +51,7 @@ static void _cgc_collect();
 // Definitions
 // ==============================================
 
-void cgc_free(void* p)
+void cgc_free(void *p)
 {
     gc_free(p);
 }
