@@ -1,0 +1,471 @@
+--------------------------------------------------------------------------------
+-- Metadata
+--------------------------------------------------------------------------------
+Invocation:       /usr/bin/cg_annotate cg_out.nop --show=Ir
+I1 cache:         32768 B, 64 B, 8-way associative
+D1 cache:         32768 B, 64 B, 8-way associative
+LL cache:         33554432 B, 64 B, direct-mapped
+Command:          bin/NOP
+Events recorded:  Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Events shown:     Ir
+Event sort order: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Threshold:        0.1%
+Annotation:       on
+
+--------------------------------------------------------------------------------
+-- Summary
+--------------------------------------------------------------------------------
+Ir____________________ 
+
+1,648,499,239 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+-- File:function summary
+--------------------------------------------------------------------------------
+  Ir_________________________  file:function
+
+< 515,612,160 (31.3%,  31.3%)  ./malloc/./malloc/malloc.c:
+  219,235,896 (13.3%)            _int_free
+  182,696,768 (11.1%)            malloc
+  113,677,872  (6.9%)            free
+
+< 397,872,783 (24.1%,  55.4%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h:
+  211,116,178 (12.8%)            stack_push
+  186,756,582 (11.3%)            stack_pop
+
+< 310,584,373 (18.8%,  74.3%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h:
+   89,318,368  (5.4%)            _ptr_stack_pop
+   85,258,446  (5.2%)            ptr_stack_push
+   73,078,704  (4.4%)            ptr_stack_scope_start
+   62,928,846  (3.8%)            ptr_stack_scope_end
+
+< 168,488,147 (10.2%,  84.5%)  /home/madi/cosc490/cgc/test/bench/inf_chain/main.c:
+  144,127,357  (8.7%)            iterate
+   24,360,790  (1.5%)            main
+
+< 117,737,838  (7.1%,  91.6%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h:
+   73,078,668  (4.4%)            nop_alloc
+   44,659,164  (2.7%)            nop_free
+
+<  64,963,701  (3.9%,  95.6%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h:
+   64,958,816  (3.9%)            monitor_write_heapstate
+
+<  44,659,176  (2.7%,  98.3%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h:
+   44,659,164  (2.7%)            cgc_free
+
+<  16,239,829  (1.0%,  99.3%)  ???:
+   16,239,817  (1.0%)            ???
+
+<  12,179,853  (0.7%, 100.0%)  ./malloc/./malloc/arena.c:
+   12,179,772  (0.7%)            free
+
+--------------------------------------------------------------------------------
+-- Function:file summary
+--------------------------------------------------------------------------------
+  Ir_________________________  function:file
+
+> 219,235,896 (13.3%,  13.3%)  _int_free:./malloc/./malloc/malloc.c
+
+> 211,116,178 (12.8%,  26.1%)  stack_push:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+
+> 186,756,582 (11.3%,  37.4%)  stack_pop:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+
+> 182,696,777 (11.1%,  48.5%)  malloc:
+  182,696,768 (11.1%)            ./malloc/./malloc/malloc.c
+
+> 144,127,357  (8.7%,  57.3%)  iterate:/home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+
+> 125,857,644  (7.6%,  64.9%)  free:
+  113,677,872  (6.9%)            ./malloc/./malloc/malloc.c
+   12,179,772  (0.7%)            ./malloc/./malloc/arena.c
+
+>  89,318,368  (5.4%,  70.3%)  _ptr_stack_pop:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>  85,258,446  (5.2%,  75.5%)  ptr_stack_push:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>  73,078,704  (4.4%,  79.9%)  ptr_stack_scope_start:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>  73,078,668  (4.4%,  84.4%)  nop_alloc:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+
+>  64,958,816  (3.9%,  88.3%)  monitor_write_heapstate:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h
+
+>  62,928,846  (3.8%,  92.1%)  ptr_stack_scope_end:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>  44,659,164  (2.7%,  94.8%)  nop_free:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+
+>  44,659,164  (2.7%,  97.5%)  cgc_free:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h
+
+>  24,360,790  (1.5%,  99.0%)  main:/home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+
+>  16,239,817  (1.0%, 100.0%)  ???:???
+
+--------------------------------------------------------------------------------
+-- Annotated source file: ./malloc/./malloc/arena.c
+--------------------------------------------------------------------------------
+Unannotated because one or more of these original files are unreadable:
+- ./malloc/./malloc/arena.c
+
+--------------------------------------------------------------------------------
+-- Annotated source file: ./malloc/./malloc/malloc.c
+--------------------------------------------------------------------------------
+Unannotated because one or more of these original files are unreadable:
+- ./malloc/./malloc/malloc.c
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+-- line 47 ----------------------------------------
+         .             }\
+         .         }
+         .         
+         .         // ==============================================
+         .         // Definitions
+         .         // ==============================================
+         .         
+         .         void cgc_free(void *p)
+20,299,620 (1.2%)  {
+12,179,772 (0.7%)      gc_free(p);
+12,179,772 (0.7%)  }
+         .         
+         .         static void _cgc_init()
+         3 (0.0%)  {
+         2 (0.0%)      ptr_stack_init();
+         2 (0.0%)      monitor_init();
+         .         #ifdef GC_ARC
+         .             arc_init();
+         .         #endif
+         .         #ifdef GC_TRC
+         .             trc_init();
+         .         #endif
+         .         #ifdef GC_NOP
+         2 (0.0%)      nop_init();
+         .         #endif
+         3 (0.0%)  }
+         .         
+         .         static void _cgc_end()
+         .         {
+         .             monitor_end();
+         .         }
+         .         
+         .         static void _cgc_collect()
+         .         {
+-- line 80 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+-- line 38 ----------------------------------------
+         .         size_t ALLOC_ALLOCATED_POOLS;
+         .         size_t GC_TOTAL_PTR_ASSIGNS;
+         .         
+         .         // ==============================================
+         .         // Definitions
+         .         // ==============================================
+         .         
+         .         void monitor_init()
+         4 (0.0%)  {
+         4 (0.0%)      const char *outpath = getenv("CGC_OUTPATH");
+         2 (0.0%)      if (outpath) {
+         .                 enabled = true;
+         .         
+         .                 /////// open outpath
+         .                 outfile = fopen(outpath, "w");
+         .                 if (outfile == NULL) {
+         .                     perror("death and bad (error opening outfile csv)");
+         .                     exit(1);
+         .                 }
+-- line 56 ----------------------------------------
+-- line 88 ----------------------------------------
+         .                 assert(gc_select != NULL);
+         .                 fprintf(outfile, "metadata,%s\n", gc_select);
+         .                 ///////
+         .         
+         .                 /////// record start time
+         .                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+         .                 /////// 
+         .             }
+         3 (0.0%)  }
+         .         
+         .         void monitor_end()
+         .         {
+         .             if (enabled) {
+         .                 fprintf(outfile, "%s", monitor_buffer);
+         .                 fflush(outfile);
+         .                 fclose(outfile);
+         .             }
+-- line 104 ----------------------------------------
+-- line 165 ----------------------------------------
+         .         }
+         .         
+         .         void cgc_monitor_write_heapstate()
+         .         {
+         .             monitor_write_heapstate();
+         .         }
+         .         
+         .         void monitor_write_heapstate()
+24,359,556 (1.5%)  {
+24,359,556 (1.5%)      if (enabled) {
+         .                 // granularity
+         .                 if (monitor_count_heapstate < monitor_granularity_heapstate) {
+         .                     monitor_count_heapstate++;
+         .                     return;
+         .                 }
+         .                 monitor_count_heapstate = 0;
+         .         
+         .                 // actually writing
+         .         
+         .                 _monitor_buffer_write("heapstate,%ld,%ld,%ld,%ld\n",
+         .                                       ALLOC_ALLOCATED_BLOCKS,
+         .                                       ALLOC_ALLOCATED_BYTES,
+         .                                       ALLOC_ALLOCATED_POOLS, GC_TOTAL_PTR_ASSIGNS);
+         .             }
+16,239,704 (1.0%)  }
+         .         
+         .         void cgc_monitor_write_user(char *line, ...)
+     3,045 (0.0%)  {
+       609 (0.0%)      if (enabled) {
+         .                 va_list args;
+         .                 va_start(args, line);
+         .         
+         .                 _monitor_buffer_vwrite(line, args);
+         .         
+         .                 va_end(args);
+         .             }
+     1,218 (0.0%)  }
+         .         
+         .         
+         .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+         .         #ifndef NOP_H
+         .         #define NOP_H
+         .         
+         .         #include <stdlib.h>
+         .         #include "debug.h"
+         .         
+         .         void nop_init()
+         3 (0.0%)  {
+         .         
+         3 (0.0%)  }
+         .         
+         .         
+         .         void nop_alloc(void **p, size_t size)
+24,359,556 (1.5%)  {
+16,239,704 (1.0%)      void *space = malloc(size);
+ 8,119,852 (0.5%)      if (space == NULL) {
+         .                 log_error("death and bad (failed to malloc)");
+         .             }
+12,179,778 (0.7%)      *p = space;
+         .             log_trace("a %p", *p);
+12,179,778 (0.7%)  }
+         .         
+         .         void nop_free(void *p)
+20,299,620 (1.2%)  {
+         .             log_trace("f %p", p);
+12,179,772 (0.7%)      free(p);
+12,179,772 (0.7%)  }
+         .         
+         .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+-- line 25 ----------------------------------------
+         .         
+         .         static void **_ptr_stack_pop();
+         .         
+         .         // ==============================================
+         .         // Definitions
+         .         // ==============================================
+         .         
+         .         void ptr_stack_init()
+         3 (0.0%)  {
+         .             log_info("ptr_stack_init()");
+         3 (0.0%)      PTR_STACK = stack_init(100);
+         .             log_info("ptr_stack_init(...) == void");
+         3 (0.0%)  }
+         .         
+         .         void ptr_stack_scope_start(int arg_count, ...)
+30,449,460 (1.8%)  {
+         .             log_trace("scope start");
+         .             log_info("ptr_stack_scope_start(%d, ...)", arg_count);
+         .         
+         .             va_list args;
+12,179,784 (0.7%)      va_start(args, arg_count);
+         .         
+ 8,119,856 (0.5%)      stack_push(PTR_STACK, PTR_STACK_SENTINEL);
+10,149,820 (0.6%)      for (int i = 0; i < arg_count; i++) {
+         .                 void **p = va_arg(args, void **);
+         .                 gc_register(*p);
+         .                 ptr_stack_push(p);
+         .             }
+         .         
+         .             va_end(args);
+         .         
+         .             log_info("ptr_stack_scope_start(...) == void");
+12,179,784 (0.7%)  }
+         .         
+         .         void ptr_stack_push(void **p)
+30,449,445 (1.8%)  {
+         .             log_info("ptr_stack_push(%p)", p);
+         .         
+12,179,778 (0.7%)      if (p == PTR_STACK_SENTINEL) {
+         .                 log_warn("Tried to push sentinel value onto PTR_STACK");
+         .                 return;
+         .             }
+30,449,445 (1.8%)      stack_push(PTR_STACK, p);
+         .         
+         .             log_info("ptr_stack_push(...) == void");
+12,179,778 (0.7%)  }
+         .         
+         .         void ptr_stack_scope_end()
+ 8,119,852 (0.5%)  {
+         .             log_trace("scope end");
+         .             log_info("ptr_stack_scope_end()");
+         .         
+ 6,089,889 (0.4%)      while (true) {
+24,359,555 (1.5%)          void **p = _ptr_stack_pop();
+16,239,702 (1.0%)          if (p == PTR_STACK_SENTINEL)
+ 2,029,962 (0.1%)              break;
+         .                 gc_deregister(*p);
+         .             }
+         .         
+         .             log_info("ptr_stack_scope_end(...) == void");
+ 6,089,886 (0.4%)  }
+         .         
+         .         static void **_ptr_stack_pop()
+32,479,408 (2.0%)  {
+         .             log_info("_ptr_stack_pop()");
+         .         
+32,479,407 (2.0%)      void **p = stack_pop(PTR_STACK);
+         .         
+         .             log_info("_ptr_stack_pop() == %p", p);
+ 8,119,851 (0.5%)      return p;
+16,239,702 (1.0%)  }
+         .         
+         .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+-- line 23 ----------------------------------------
+         .         
+         .         static void _stack_grow(stack_t * s);
+         .         
+         .         // ==============================================
+         .         // Definitions
+         .         // ==============================================
+         .         
+         .         stack_t *stack_init(size_t initial_size)
+         5 (0.0%)  {
+         3 (0.0%)      stack_t *s = malloc(sizeof(stack_t));
+         .         
+         3 (0.0%)      s->max_size = initial_size;
+         2 (0.0%)      s->top = 0;
+         7 (0.0%)      s->items = malloc(sizeof(void **) * initial_size);
+         .         
+         1 (0.0%)      return s;
+         2 (0.0%)  }
+         .         
+         .         void stack_push(stack_t *s, void **p)
+48,719,118 (3.0%)  {
+48,719,118 (3.0%)      if (s->top == s->max_size)
+         .                 _stack_grow(s);
+89,318,383 (5.4%)      s->items[s->top++] = p;
+24,359,559 (1.5%)  }
+         .         
+         .         void **stack_pop(stack_t *s)
+40,599,260 (2.5%)  {
+32,479,408 (2.0%)      if (s->top == 0) {
+         .                 log_error("Tried to stack_pop with top == 0");
+         .                 exit(1);
+         .             }
+97,438,212 (5.9%)      return s->items[--s->top];
+16,239,702 (1.0%)  }
+         .         
+         .         void stack_drop(stack_t *s)
+         .         {
+         .             free(s->items);
+         .             free(s);
+         .         }
+         .         
+         .         static void _stack_grow(stack_t *s)
+-- line 63 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+--------------------------------------------------------------------------------
+Ir_______________ 
+
+-- line 8 ----------------------------------------
+         .             struct list *tail;
+         .         } list_t;
+         .         
+         .         void list_t__map_ptrs(list_t *a, void (*f)(void *))
+         .         {
+         .             (*f) (a->tail);
+         .         }
+         .         
+14,209,741 (0.9%)  void iterate() {
+12,179,778 (0.7%)      cgc_scope_start();
+         .         
+ 8,119,852 (0.5%)      cgc_scope_declare(list_t *, a);
+12,179,778 (0.7%)      cgc_alloc(&a, list_t);
+         .             
+ 8,119,852 (0.5%)      cgc_scope_declare(list_t*, b);
+12,179,778 (0.7%)      cgc_alloc(&b, list_t);
+         .             
+ 8,119,852 (0.5%)      cgc_scope_declare(list_t*, c);
+         .             //cgc_alloc(&c, list_t);
+         .         
+16,239,704 (1.0%)      cgc_assign(&a->tail, b);
+16,239,704 (1.0%)      cgc_assign(&b->tail, c);
+         .         
+12,179,774 (0.7%)      cgc_scope_end();
+ 6,089,886 (0.4%)      cgc_free(a);
+ 6,089,886 (0.4%)      cgc_free(b);
+         .             //cgc_free(c);
+ 2,029,962 (0.1%)      return;
+10,149,810 (0.6%)  }
+         .         
+         7 (0.0%)  int main() {
+         8 (0.0%)      cgc_scope_start();
+         .         
+         1 (0.0%)      int total_iterations  = 10000000;
+         1 (0.0%)      int target_recordings = 1000;
+         4 (0.0%)      int threshold = total_iterations / target_recordings;
+         .         
+ 8,119,853 (0.5%)      for (int i = 0; i < total_iterations; i++) {
+ 4,059,926 (0.2%)          iterate();
+12,179,772 (0.7%)          if (i % threshold == 0) {
+     1,218 (0.0%)              cgc_monitor_write_user("progress,%d\n", i);
+         .                 }
+         .             }
+         .             cgc_scope_end();
+         .             return 0;
+         .         
+
+--------------------------------------------------------------------------------
+-- Annotation summary
+--------------------------------------------------------------------------------
+Ir___________________ 
+
+1,104,306,018 (67.0%)    annotated: files known & above threshold & readable, line numbers known
+            0            annotated: files known & above threshold & readable, line numbers unknown
+            0          unannotated: files known & above threshold & two or more non-identical
+  527,792,013 (32.0%)  unannotated: files known & above threshold & unreadable 
+      161,379  (0.0%)  unannotated: files known & below threshold
+   16,239,829  (1.0%)  unannotated: files unknown
+

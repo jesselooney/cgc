@@ -15,9 +15,10 @@
 
 size_t GC_TOTAL_PTR_ASSIGNS = 0;
 
-typedef void (*map_ptrs_t)(void *, void (*f)(void *));
+typedef void (*map_ptrs_t)(void *, void(*f)(void *));
 
-void gc_ptr_array_map_ptrs(void *p, void (*f)(void *)) {
+void gc_ptr_array_map_ptrs(void *p, void (*f)(void *))
+{
     log_info("gc_ptr_array_map_ptrs(%p, %p)", p, f);
 
     pool_t *pool = get_pool(p);

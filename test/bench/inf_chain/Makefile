@@ -115,3 +115,21 @@ vc_recent:
 	FIRST=$$(ls reports | tail -n 2 | head -n 1); \
 	SECOND=$$(ls reports | tail -n 1); \
 	$(PYTHON) vis.py reports/$$FIRST reports/$$SECOND
+
+
+#########################
+# CACHEGRIND
+
+cg_all: $(TARGETS)
+	CGC_POOL_EXP=$(CGC_POOL_EXP); \
+	CGC_HEAP_EXP=$(CGC_HEAP_EXP); \
+	valgrind --tool=cachegrind --cache-sim=yes \
+		--cachegrind-out-file=cg_out.arc bin/ARC; \
+	valgrind --tool=cachegrind --cache-sim=yes \
+		--cachegrind-out-file=cg_out.trc bin/TRC; \
+	valgrind --tool=cachegrind --cache-sim=yes \
+		--cachegrind-out-file=cg_out.nop bin/NOP
+	
+	cg_annotate cg_out.arc > cg_out.arc.a
+	cg_annotate cg_out.trc > cg_out.trc.a
+	cg_annotate cg_out.nop > cg_out.nop.a
