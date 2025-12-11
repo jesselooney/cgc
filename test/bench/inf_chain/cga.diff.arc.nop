@@ -1,0 +1,1000 @@
+--------------------------------------------------------------------------------
+-- Metadata
+--------------------------------------------------------------------------------
+Invocation:       /usr/bin/cg_annotate --diff cg_out.arc cg_out.nop --show=Ir
+I1 cache:         32768 B, 64 B, 8-way associative
+D1 cache:         32768 B, 64 B, 8-way associative
+LL cache:         33554432 B, 64 B, direct-mapped
+Command 1:        bin/ARC
+Command 2:        bin/NOP
+Events recorded:  Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Events shown:     Ir
+Event sort order: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Threshold:        0.1%
+Annotation:       on
+
+--------------------------------------------------------------------------------
+-- Summary
+--------------------------------------------------------------------------------
+Ir______________________ 
+
+-19,481,725,157 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+-- File:function summary
+--------------------------------------------------------------------------------
+  Ir_____________________________  file:function
+
+< -11,590,028,763 (59.5%,  59.5%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h:
+   -1,920,000,000  (9.9%)            _alloc_log2_ceil
+   -1,280,000,000  (6.6%)            get_block_id
+   -1,150,000,000  (5.9%)            alloc_is_heap_ptr
+   -1,120,000,009  (5.7%)            alloc_new
+   -1,120,000,000  (5.7%)            get_pool
+     -960,000,000  (4.9%)            alloc_del_by_id
+     -880,000,000  (4.5%)            get_start_of_block
+     -780,000,000  (4.0%)            get_block_by_id
+     -640,000,000  (3.3%)            _alloc_clear_free_bit
+     -460,000,000  (2.4%)            alloc_del
+     -460,000,000  (2.4%)            _alloc_set_free_bit_by_id
+     -420,000,000  (2.2%)            clear_bit
+     -400,000,000  (2.1%)            set_bit
+
+<  -4,000,000,008 (20.5%,  80.0%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h:
+   -1,080,000,000  (5.5%)            _arc_is_heap_ptr
+   -1,000,000,000  (5.1%)            _arc_dec
+     -740,000,000  (3.8%)            arc_deregister
+     -520,000,000  (2.7%)            arc_alloc
+     -490,000,000  (2.5%)            arc_assign
+     -170,000,000  (0.9%)            _arc_inc
+
+<  -1,562,127,289  (8.0%,  88.0%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h:
+     -828,883,848  (4.3%)            stack_push
+     -733,243,441  (3.8%)            stack_pop
+
+<  -1,339,415,696  (6.9%,  94.9%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h:
+     -367,071,167  (1.9%)            ptr_stack_scope_end
+     -350,681,643  (1.8%)            _ptr_stack_pop
+     -334,741,554  (1.7%)            ptr_stack_push
+     -286,921,332  (1.5%)            ptr_stack_scope_start
+
+<  -1,021,517,893  (5.2%, 100.2%)  /home/madi/cosc490/cgc/test/bench/inf_chain/main.c:
+     -645,872,643  (3.3%)            iterate
+     -280,000,000  (1.4%)            list_t__map_ptrs
+      -95,645,250  (0.5%)            main
+
+<     515,610,724 (-2.6%,  97.5%)  ./malloc/./malloc/malloc.c:
+      219,235,896 (-1.1%)            _int_free
+      182,696,670 (-0.9%)            malloc
+      113,677,872 (-0.6%)            free
+
+<    -255,060,321  (1.3%,  98.8%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h:
+     -255,041,184  (1.3%)            monitor_write_heapstate
+
+<    -240,000,026  (1.2%, 100.1%)  ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms
+
+<     117,737,838 (-0.6%,  99.5%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h:
+       73,078,668 (-0.4%)            nop_alloc
+       44,659,164 (-0.2%)            nop_free
+
+<     -95,340,844  (0.5%,  99.9%)  /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h:
+      -95,340,836  (0.5%)            cgc_free
+
+<     -23,760,368  (0.1%, 100.1%)  ???:???
+
+--------------------------------------------------------------------------------
+-- Function:file summary
+--------------------------------------------------------------------------------
+  Ir____________________________  function:file
+
+> -1,920,000,000  (9.9%,   9.9%)  _alloc_log2_ceil:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+> -1,280,000,000  (6.6%,  16.4%)  get_block_id:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+> -1,150,000,000  (5.9%,  22.3%)  alloc_is_heap_ptr:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+> -1,120,000,009  (5.7%,  28.1%)  alloc_new:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+> -1,120,000,000  (5.7%,  33.8%)  get_pool:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+> -1,080,000,000  (5.5%,  39.4%)  _arc_is_heap_ptr:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+> -1,000,000,000  (5.1%,  44.5%)  _arc_dec:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+>   -960,000,000  (4.9%,  49.4%)  alloc_del_by_id:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -880,000,000  (4.5%,  53.9%)  get_start_of_block:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -828,883,848  (4.3%,  58.2%)  stack_push:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+
+>   -780,000,000  (4.0%,  62.2%)  get_block_by_id:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -740,000,000  (3.8%,  66.0%)  arc_deregister:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+>   -733,243,441  (3.8%,  69.8%)  stack_pop:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+
+>   -645,872,643  (3.3%,  73.1%)  iterate:/home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+
+>   -640,000,000  (3.3%,  76.4%)  _alloc_clear_free_bit:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -520,000,000  (2.7%,  79.0%)  arc_alloc:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+>   -490,000,000  (2.5%,  81.6%)  arc_assign:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+>   -460,000,000  (2.4%,  83.9%)  alloc_del:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -460,000,000  (2.4%,  86.3%)  _alloc_set_free_bit_by_id:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -420,000,000  (2.2%,  88.4%)  clear_bit:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -400,000,000  (2.1%,  90.5%)  set_bit:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+
+>   -367,071,167  (1.9%,  92.4%)  ptr_stack_scope_end:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>   -350,681,643  (1.8%,  94.2%)  _ptr_stack_pop:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>   -334,741,554  (1.7%,  95.9%)  ptr_stack_push:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>   -286,921,332  (1.5%,  97.4%)  ptr_stack_scope_start:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+
+>   -280,000,000  (1.4%,  98.8%)  list_t__map_ptrs:/home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+
+>   -255,041,184  (1.3%, 100.1%)  monitor_write_heapstate:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h
+
+>   -240,000,026  (1.2%, 101.3%)  __memset_avx2_unaligned_erms:./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S
+
+>    219,235,896 (-1.1%, 100.2%)  _int_free:./malloc/./malloc/malloc.c
+
+>    182,696,674 (-0.9%,  99.3%)  malloc:
+     182,696,670 (-0.9%)            ./malloc/./malloc/malloc.c
+
+>   -170,000,000  (0.9%, 100.1%)  _arc_inc:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+
+>    125,857,644 (-0.6%,  99.5%)  free:
+     113,677,872 (-0.6%)            ./malloc/./malloc/malloc.c
+
+>    -95,645,250  (0.5%, 100.0%)  main:/home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+
+>    -95,340,836  (0.5%, 100.5%)  cgc_free:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h
+
+>     73,078,668 (-0.4%, 100.1%)  nop_alloc:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+
+>     44,659,164 (-0.2%,  99.9%)  nop_free:/home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+
+>    -23,760,368  (0.1%, 100.0%)  ???:???
+
+--------------------------------------------------------------------------------
+-- Annotated source file: ./malloc/./malloc/malloc.c
+--------------------------------------------------------------------------------
+Unannotated because one or more of these original files are unreadable:
+- ./malloc/./malloc/malloc.c
+
+--------------------------------------------------------------------------------
+-- Annotated source file: ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S
+--------------------------------------------------------------------------------
+Unannotated because one or more of these original files are unreadable:
+- ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/alloc.h
+--------------------------------------------------------------------------------
+Ir___________________ 
+
+-- line 80 ----------------------------------------
+             .         //===============================================
+             .         // Definitions
+             .         //===============================================
+             .         
+             .         //  alloc_init()
+             .         //      initialize a giant slab of memory for us to parse up. start the heap at the first 
+             .         //      pool aligned address and bump the top up from there
+             .         void alloc_init()
+            -4 (0.0%)  {
+             .             log_info("alloc_init()");
+             .         
+            -4 (0.0%)      const char *env_pool_exp = getenv("CGC_POOL_EXP");
+            -2 (0.0%)      if (env_pool_exp == NULL) {
+            -2 (0.0%)          ALLOC_POOL_SIZE_EXP = 16;
+             .             } else {
+             .                 ALLOC_POOL_SIZE_EXP = atoi(env_pool_exp);
+             .             }
+             .         
+            -4 (0.0%)      const char *env_heap_exp = getenv("CGC_HEAP_EXP");
+            -2 (0.0%)      if (env_pool_exp == NULL) {
+            -2 (0.0%)          ALLOC_HEAP_SIZE_EXP = 30;
+             .             } else {
+             .                 ALLOC_HEAP_SIZE_EXP = atoi(env_heap_exp);
+             .             }
+             .         
+            -4 (0.0%)      assert(ALLOC_POOL_SIZE_EXP <= ALLOC_HEAP_SIZE_EXP);
+             .         
+            -7 (0.0%)      ALLOC_POOL_SIZE = 1 << ALLOC_POOL_SIZE_EXP;
+            -7 (0.0%)      ALLOC_HEAP_SIZE = 1 << ALLOC_HEAP_SIZE_EXP;
+            -1 (0.0%)      ALLOC_MIN_BLOCK_COUNT_EXP = 3;
+            -1 (0.0%)      ALLOC_MAX_BLOCK_COUNT_EXP = 6;
+            -1 (0.0%)      ALLOC_MIN_BLOCK_SIZE_EXP = 5;
+            -1 (0.0%)      ALLOC_MAX_BLOCK_SIZE_EXP =
+            -3 (0.0%)          ALLOC_POOL_SIZE_EXP - ALLOC_MIN_BLOCK_COUNT_EXP;
+             .         
+            -9 (0.0%)      void *ptr = mmap(NULL, ALLOC_HEAP_SIZE, PROT_READ | PROT_WRITE,
+             .                              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+             .         
+            -2 (0.0%)      if (ptr == MAP_FAILED) {
+             .                 log_error("call to mmap failed with errno == %d", errno);
+             .                 exit(errno);
+             .             }
+             .         
+             .             log_debug("ptr == %p", (void *) ptr);
+            -1 (0.0%)      ALLOC_HEAP_START =
+            -2 (0.0%)          (void *) (ptr +
+            -9 (0.0%)                    (ALLOC_POOL_SIZE - ((intptr_t) ptr % ALLOC_POOL_SIZE)));
+            -2 (0.0%)      ALLOC_HEAP_TOP = ALLOC_HEAP_START;
+             .             log_debug("ALLOC_HEAP_START == ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
+             .             log_info("alloc_init() == void");
+            -3 (0.0%)  }
+             .         
+             .         //  alloc_new(size_t)
+             .         //      allocate memory
+             .         //      rounded up to occupy a block of the next power of 2 size
+             .         void *alloc_new(size_t size)
+  -100,000,000 (0.5%)  {
+             .             log_info("alloc_new(%ld)", size);
+   -80,000,000 (0.4%)      _log2_ceil_return_t log2_ceil = _alloc_log2_ceil(size);
+   -40,000,000 (0.2%)      int index = log2_ceil.exp;
+   -40,000,000 (0.2%)      int block_size = log2_ceil.pow;
+             .             log_debug("index == %d", index);
+             .             log_debug("block_size == %d", block_size);
+             .         
+             .             // if smaller than smallest block, over-allocate in the smallest block size
+   -60,000,000 (0.3%)      if (index < ALLOC_MIN_BLOCK_SIZE_EXP) {
+             .                 index = ALLOC_MIN_BLOCK_SIZE_EXP;
+             .                 log_info("block size too small; clamping index to %d", index);
+             .             }
+             .             // Fail if requested size is larger than the largest size class.
+   -60,000,000 (0.3%)      if (index > ALLOC_MAX_BLOCK_SIZE_EXP) {
+             .                 log_info("block size too large; returning NULL");
+             .                 // TODO: Add large object handling. 
+             .                 return NULL;
+             .             }
+             .             // Get the next block in the free list for this size class.
+  -120,000,000 (0.6%)      block_t *block = ALLOC_FREE_LISTS[index];
+             .         
+             .             // If there is no next block, create one by allocating a pool.
+   -40,000,000 (0.2%)      if (block == NULL) {
+             .                 log_info("no free block in size class; allocating a new pool");
+            -5 (0.0%)          void *head_block = _alloc_new_pool(block_size);
+            -2 (0.0%)          if (head_block == NULL) {
+             .                     log_info("failed to allocate new pool");
+             .                     log_info("alloc_new(...) == NULL");
+             .                     return NULL;        // Failed to allocate the pool.
+             .                 }
+            -2 (0.0%)          block = head_block;
+             .             }
+             .             log_debug("block == %p", block);
+             .         
+             .             // Pull `block` off the free list.
+   -60,000,000 (0.3%)      block_t *next_block = *((block_t **) block);
+             .             log_debug("next_block == %p", next_block);
+  -120,000,000 (0.6%)      ALLOC_FREE_LISTS[index] = next_block;
+             .         
+             .             // Initialize the block's memory for safety.
+  -120,000,000 (0.6%)      memset(block, 0, block_size);
+             .         
+             .             // Mark `block` as occupied.
+   -60,000,000 (0.3%)      _alloc_clear_free_bit(block);
+             .         
+             .             // mon ============
+   -60,000,000 (0.3%)      ALLOC_ALLOCATED_BLOCKS += 1;
+  -100,000,000 (0.5%)      ALLOC_ALLOCATED_BYTES += block_size;
+             .             // mon ============
+             .         
+             .             log_info("alloc_new(...) == %p", block);
+   -20,000,000 (0.1%)      return block;
+   -40,000,000 (0.2%)  }
+             .         
+             .         void alloc_del(block_t *block)
+  -100,000,000 (0.5%)  {
+             .             log_info("alloc_del(%p)", block);
+             .         
+   -80,000,000 (0.4%)      pool_t *pool = get_pool(block);
+  -120,000,000 (0.6%)      size_t block_id = get_block_id(pool, block);
+  -100,000,000 (0.5%)      alloc_del_by_id(pool, block_id);
+             .         
+             .             log_info("alloc_del(...) == void");
+   -60,000,000 (0.3%)  }
+             .         
+             .         void alloc_del_by_id(pool_t *pool, size_t block_id)
+  -120,000,000 (0.6%)  {
+             .             log_info("alloc_del_by_id(%p, %lu)", pool, block_id);
+             .         
+  -120,000,000 (0.6%)      void *block = (void *) get_block_by_id(pool, block_id);
+  -100,000,000 (0.5%)      _alloc_set_free_bit_by_id(pool, block_id);
+             .         
+             .             // Get the index of the free list `block` belongs in.
+  -100,000,000 (0.5%)      _log2_ceil_return_t log2_ceil = _alloc_log2_ceil(pool->block_size);
+   -40,000,000 (0.2%)      int index = log2_ceil.exp;
+             .         
+             .             // Insert `block` at the front of the correct free list.
+  -140,000,000 (0.7%)      *((void **) block) = ALLOC_FREE_LISTS[index];
+  -120,000,000 (0.6%)      ALLOC_FREE_LISTS[index] = block;
+             .         
+             .             // mon ============
+   -60,000,000 (0.3%)      ALLOC_ALLOCATED_BLOCKS -= 1;
+  -100,000,000 (0.5%)      ALLOC_ALLOCATED_BYTES -= pool->block_size;
+             .             // mon ============
+             .         
+             .             log_info("alloc_del_by_id(...) == void");
+   -60,000,000 (0.3%)  }
+             .         
+             .         bool alloc_get_mark_bit(void *block)
+             .         {
+             .             log_info("alloc_get_mark_bit(%p)", block);
+             .         
+             .             pool_t *pool = get_pool(block);
+             .             size_t block_id = get_block_id(pool, block);
+             .             uint8_t resident_byte =
+-- line 231 ----------------------------------------
+-- line 248 ----------------------------------------
+             .             size_t block_id = get_block_id(pool, block);
+             .             uint8_t *resident_byte =
+             .                 &pool->data[bitvec_size(pool->block_size) + (block_id / 8)];
+             .             set_bit(resident_byte, block_id % 8);
+             .             log_info("alloc_set_mark_bit(...) == void");
+             .         }
+             .         
+             .         bool alloc_is_heap_ptr(void *ptr)
+  -360,000,000 (1.8%)  {
+  -610,000,000 (3.1%)      return ALLOC_HEAP_START <= ptr && ptr < ALLOC_HEAP_TOP;
+  -180,000,000 (0.9%)  }
+             .         
+             .         //  _alloc_new_pool(size_t)
+             .         //      if the ll of blocks in a size class is empty, we need to initialize a new set of 
+             .         //      blocks in a new pool. 
+             .         //      return NULL if no pool could be allocated
+             .         //      return a pointer to the block at the head of the linked list of blocks on success
+             .         static void *_alloc_new_pool(size_t block_size)
+            -5 (0.0%)  {
+             .             log_info("_alloc_new_pool(%ld)", block_size);
+             .         
+             .             log_debug("ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
+             .             log_debug("ALLOC_POOL_SIZE == %ld", ALLOC_POOL_SIZE);
+             .             log_debug("ALLOC_HEAP_START == %p", ALLOC_HEAP_START);
+             .             log_debug("ALLOC_HEAP_SIZE == %ld", ALLOC_HEAP_SIZE);
+            -5 (0.0%)      if (ALLOC_HEAP_TOP + ALLOC_POOL_SIZE >
+            -3 (0.0%)          ALLOC_HEAP_START + ALLOC_HEAP_SIZE) {
+             .                 log_info("cannot allocate new pool");
+             .                 log_info("_alloc_new_pool(...) == NULL");
+             .                 return NULL;
+             .             }
+             .         
+            -2 (0.0%)      pool_t *pool = (pool_t *) ALLOC_HEAP_TOP;
+            -4 (0.0%)      ALLOC_HEAP_TOP += ALLOC_POOL_SIZE;
+             .             log_debug("ALLOC_HEAP_TOP == %p", ALLOC_HEAP_TOP);
+             .         
+            -3 (0.0%)      pool->block_size = block_size;
+             .             log_debug("pool == %p", pool);
+             .             log_debug("pool->block_size == %ld", pool->block_size);
+             .         
+             .             // Set all the free bits. This includes the bits corresponding to blocks
+             .             // this header occupies. Since we never add those to the free list, this
+             .             // ensures they will never be touched in any way hereafter.
+            -3 (0.0%)      log_debug("bitvec_size(block_size) == %ld", bitvec_size(block_size));
+            -9 (0.0%)      memset(pool->data, ~0, bitvec_size(block_size));
+             .         
+            -2 (0.0%)      void *pool_start = pool;
+            -4 (0.0%)      void *pool_end = pool_start + ALLOC_POOL_SIZE;
+            -6 (0.0%)      void *pool_header_end = pool_start + header_size(block_size);
+            -1 (0.0%)      void *prev = NULL;
+            -4 (0.0%)      void *block = pool_start + block_size;
+             .             log_info("dividing pool into blocks");
+             .             log_debug("pool_end == %p", pool_end);
+             .             log_debug("pool_header_end == %p", pool_header_end);
+       -10,239 (0.0%)      for (; block < pool_end; block += block_size) {
+        -6,141 (0.0%)          if (block < pool_header_end) {
+           -16 (0.0%)              continue;
+             .                 }
+             .         
+        -6,093 (0.0%)          *((void **) block) = prev;
+        -6,093 (0.0%)          prev = block;
+             .             }
+             .         
+             .             log_info("_alloc_new_pool(...) == %p", prev);
+            -3 (0.0%)      ALLOC_ALLOCATED_POOLS += 1;
+            -1 (0.0%)      return prev;
+            -2 (0.0%)  }
+             .         
+             .         static void _alloc_set_free_bit_by_id(pool_t *pool, size_t block_id)
+  -120,000,000 (0.6%)  {
+  -140,000,000 (0.7%)      uint8_t *resident_byte = &pool->data[block_id / 8];
+  -140,000,000 (0.7%)      set_bit(resident_byte, block_id % 8);
+   -60,000,000 (0.3%)  }
+             .         
+             .         static void _alloc_clear_free_bit(block_t *block)
+  -100,000,000 (0.5%)  {
+             .             log_info("_alloc_clear_free_bit(%p)", block);
+             .         
+   -80,000,000 (0.4%)      pool_t *pool = get_pool(block);
+             .             log_debug("pool == %p", pool);
+             .             log_debug("pool->block_size = %ld", pool->block_size);
+             .         
+  -120,000,000 (0.6%)      size_t block_id = get_block_id(pool, block);
+  -140,000,000 (0.7%)      uint8_t *resident_byte = &pool->data[block_id / 8];
+  -140,000,000 (0.7%)      clear_bit(resident_byte, block_id % 8);
+             .         
+             .             log_info("_alloc_clear_free_bit(...) == void");
+   -60,000,000 (0.3%)  }
+             .         
+             .         // Quick and dirty method to find the smallest number pow such that 2^pow >= size.
+             .         // WARN: not actually guaranteed to work for all values of type size_t, since there
+             .         // might be overflow issues.
+             .         // TODO: Short circuit once pow gets too big.
+             .         static _log2_ceil_return_t _alloc_log2_ceil(size_t size)
+  -160,000,000 (0.8%)  {
+   -40,000,000 (0.2%)      int exp = 0;
+   -40,000,000 (0.2%)      int pow = 1;
+-1,000,000,000 (5.1%)      while (pow < size) {
+  -200,000,000 (1.0%)          exp++;
+  -200,000,000 (1.0%)          pow *= 2;
+             .             }
+             .         
+             .             _log2_ceil_return_t ret;
+   -80,000,000 (0.4%)      ret.exp = exp;
+   -80,000,000 (0.4%)      ret.pow = pow;
+             .         
+   -40,000,000 (0.2%)      return ret;
+   -80,000,000 (0.4%)  }
+             .         
+             .         
+             .         size_t bitvec_size(size_t block_size)
+           -12 (0.0%)  {
+           -12 (0.0%)      return ALLOC_POOL_SIZE / block_size / 8;
+            -6 (0.0%)  }
+             .         
+             .         size_t header_size(size_t block_size)
+            -5 (0.0%)  {
+            -5 (0.0%)      return sizeof(size_t) + 2 * bitvec_size(block_size);
+            -2 (0.0%)  }
+             .         
+             .         // Return the pool containing `p`, assuming `p` is in the heap.
+             .         pool_t *get_pool(void *p)
+  -320,000,000 (1.6%)  {
+             .             // TODO: use a mask instead of shifting twice
+  -640,000,000 (3.3%)      return (pool_t *) (((intptr_t) p >> ALLOC_POOL_SIZE_EXP) <<
+             .                                ALLOC_POOL_SIZE_EXP);
+  -160,000,000 (0.8%)  }
+             .         
+             .         // Return the ID of the block in `pool` containing `p`, assuming `p` is in `pool`.
+             .         size_t get_block_id(pool_t *pool, void *p)
+  -400,000,000 (2.1%)  {
+  -720,000,000 (3.7%)      return ((intptr_t) p - (intptr_t) pool) / pool->block_size;
+  -160,000,000 (0.8%)  }
+             .         
+             .         block_t *get_block_by_id(pool_t *pool, size_t block_id)
+  -300,000,000 (1.5%)  {
+  -360,000,000 (1.8%)      return (block_t *) (((intptr_t) pool) + (block_id * pool->block_size));
+  -120,000,000 (0.6%)  }
+             .         
+             .         // Return the (start of) the block containing `p`, assuming `p` is in the heap.
+             .         block_t *get_start_of_block(void *p)
+  -200,000,000 (1.0%)  {
+  -160,000,000 (0.8%)      pool_t *pool = get_pool(p);
+  -240,000,000 (1.2%)      size_t block_id = get_block_id(pool, p);
+  -200,000,000 (1.0%)      return get_block_by_id(pool, block_id);
+   -80,000,000 (0.4%)  }
+             .         
+             .         int get_bit(uint8_t byte, int index)
+             .         {
+             .             return (byte >> index) & 1;
+             .         }
+             .         
+             .         void set_bit(uint8_t *byte_ptr, int index)
+  -100,000,000 (0.5%)  {
+  -240,000,000 (1.2%)      *byte_ptr |= 1 << index;
+   -60,000,000 (0.3%)  }
+             .         
+             .         void clear_bit(uint8_t *byte_ptr, int index)
+  -100,000,000 (0.5%)  {
+  -260,000,000 (1.3%)      *byte_ptr &= ~(1 << index);
+   -60,000,000 (0.3%)  }
+             .         
+             .         
+             .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/arc.h
+--------------------------------------------------------------------------------
+Ir_________________ 
+
+-- line 31 ----------------------------------------
+           .         static void _arc_inc(void *p);
+           .         static void _arc_dec(void *p);
+           .         
+           .         // ==============================================
+           .         // Definitions
+           .         // ==============================================
+           .         
+           .         void arc_init()
+          -3 (0.0%)  {
+           .             log_info("arc_init()");
+          -2 (0.0%)      alloc_init();
+           .             log_info("arc_init(...) == void");
+          -3 (0.0%)  }
+           .         
+           .         void arc_alloc(void **p, size_t size,
+           .                        void (*map_ptrs)(void *, void(*f)(void *)))
+-140,000,000 (0.7%)  {
+           .             log_info("arc_alloc(%p, %ld, %p)", p, size, map_ptrs);
+-100,000,000 (0.5%)      _arc_header_t *header = alloc_new(size + sizeof(_arc_header_t));
+ -40,000,000 (0.2%)      if (header == NULL) {
+           .                 log_error("Failed to allocate a block of size %ld", size);
+           .                 exit(1);
+           .             }
+           .         
+ -40,000,000 (0.2%)      header->ref_count = 1;
+ -60,000,000 (0.3%)      header->map_ptrs = map_ptrs;
+           .         
+ -80,000,000 (0.4%)      *p = (void *) (header + 1);
+           .             log_trace("a %p", *p);
+           .             log_info("arc_alloc(...) == void");
+ -60,000,000 (0.3%)  }
+           .         
+           .         void arc_assign(void **p, void *q)
+-120,000,000 (0.6%)  {
+           .             log_info("arc_assign(%p, %p)", p, q);
+           .             // Increment before decrementing because decrementing is potentially
+           .             // destructive: arc_assign(&p, p) could fail if the order were reversed.
+-100,000,000 (0.5%)      if (_arc_is_heap_ptr(q))
+ -30,000,000 (0.2%)          _arc_inc(q);
+-120,000,000 (0.6%)      if (_arc_is_heap_ptr(*p))
+           .                 _arc_dec(*p);
+           .         
+ -60,000,000 (0.3%)      *p = q;
+           .         
+           .             log_info("arc_assign(...) == void");
+ -60,000,000 (0.3%)  }
+           .         
+           .         void arc_register(void *p)
+           .         {
+           .             log_info("arc_register(%p)", p);
+           .             if (_arc_is_heap_ptr(p))
+           .                 _arc_inc(p);
+           .             log_info("arc_register(...) == void");
+           .         }
+           .         
+           .         void arc_deregister(void *p)
+-250,000,000 (1.3%)  {
+           .             log_info("arc_deregister(%p)", p);
+-250,000,000 (1.3%)      if (_arc_is_heap_ptr(p))
+ -90,000,000 (0.5%)          _arc_dec(p);
+           .             log_info("arc_deregister(...) == void");
+-150,000,000 (0.8%)  }
+           .         
+           .         static _arc_header_t *_arc_get_header_ptr(void *p)
+           .         {
+           .             return (_arc_header_t *) p - 1;
+           .         }
+           .         
+           .         static bool _arc_is_heap_ptr(void *p)
+-450,000,000 (2.3%)  {
+           .             log_info("_arc_is_heap_ptr(%p)", p);
+-360,000,000 (1.8%)      bool ret = alloc_is_heap_ptr(p);
+           .             log_info("_arc_is_heap_ptr(...) == %d", ret);
+ -90,000,000 (0.5%)      return ret;
+-180,000,000 (0.9%)  }
+           .         
+           .         static void _arc_inc(void *p)
+ -50,000,000 (0.3%)  {
+           .             log_info("_arc_inc(%p)", p);
+           .         
+ -40,000,000 (0.2%)      _arc_header_t *header = (_arc_header_t *) get_start_of_block(p);
+ -50,000,000 (0.3%)      header->ref_count++;
+           .             log_debug("++ref_count == %lu", header->ref_count);
+           .             log_info("_arc_inc(...) == void");
+ -30,000,000 (0.2%)  }
+           .         
+           .         static void _arc_dec(void *p)
+-150,000,000 (0.8%)  {
+           .             log_info("_arc_dec(%p)", p);
+           .         
+-120,000,000 (0.6%)      _arc_header_t *header = (_arc_header_t *) get_start_of_block(p);
+           .             // The start of the "user object" containing `p`. That is, a pointer to the
+           .             // start of the object as seen from the user's perspective, excluding our
+           .             // metadata header.
+ -90,000,000 (0.5%)      void *obj = ((void *) header) + sizeof(_arc_header_t);
+           .         
+-150,000,000 (0.8%)      header->ref_count--;
+           .             log_debug("--ref_count == %lu", header->ref_count);
+           .         
+-120,000,000 (0.6%)      if (header->ref_count == 0) {
+           .                 log_info("no references remain; freeing block");
+ -80,000,000 (0.4%)          if (header->map_ptrs != NULL) {
+           .                     log_debug("header->map_ptrs == %p", header->map_ptrs);
+           .                     log_info("calling map_ptrs to deregister child pointers");
+-140,000,000 (0.7%)              (*header->map_ptrs) (obj, arc_deregister);
+           .                     log_info("finished call to map_ptrs");
+           .                 }
+           .                 log_trace("f %p", obj);
+ -60,000,000 (0.3%)          alloc_del(header);
+           .             }
+           .         
+           .             log_info("_arc_dec(...) = void");
+ -90,000,000 (0.5%)  }
+           .         
+           .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/cgc.h
+--------------------------------------------------------------------------------
+Ir_________________ 
+
+-- line 47 ----------------------------------------
+          .              }\
+          .          }
+          .          
+          .          // ==============================================
+          .          // Definitions
+          .          // ==============================================
+          .          
+          .          void cgc_free(void *p)
+-59,700,380  (0.3%)  {
+ 12,179,772 (-0.1%)      gc_free(p);
+-47,820,228  (0.2%)  }
+          .          
+          .          static void _cgc_init()
+          0          {
+          0              ptr_stack_init();
+          0              monitor_init();
+          .          #ifdef GC_ARC
+         -2  (0.0%)      arc_init();
+          .          #endif
+          .          #ifdef GC_TRC
+          .              trc_init();
+          .          #endif
+          .          #ifdef GC_NOP
+          2 (-0.0%)      nop_init();
+          .          #endif
+          0          }
+          .          
+          .          static void _cgc_end()
+         -3  (0.0%)  {
+         -2  (0.0%)      monitor_end();
+         -3  (0.0%)  }
+          .          
+          .          static void _cgc_collect()
+          .          {
+          .          #ifdef GC_TRC
+          .              trc_collect();
+          .          #endif
+          .          }
+          .          
+-- line 85 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/monitor.h
+--------------------------------------------------------------------------------
+Ir________________ 
+
+-- line 38 ----------------------------------------
+          .         size_t ALLOC_ALLOCATED_POOLS;
+          .         size_t GC_TOTAL_PTR_ASSIGNS;
+          .         
+          .         // ==============================================
+          .         // Definitions
+          .         // ==============================================
+          .         
+          .         void monitor_init()
+          0         {
+          0             const char *outpath = getenv("CGC_OUTPATH");
+          0             if (outpath) {
+          .                 enabled = true;
+          .         
+          .                 /////// open outpath
+          .                 outfile = fopen(outpath, "w");
+          .                 if (outfile == NULL) {
+          .                     perror("death and bad (error opening outfile csv)");
+          .                     exit(1);
+          .                 }
+-- line 56 ----------------------------------------
+-- line 88 ----------------------------------------
+          .                 assert(gc_select != NULL);
+          .                 fprintf(outfile, "metadata,%s\n", gc_select);
+          .                 ///////
+          .         
+          .                 /////// record start time
+          .                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+          .                 /////// 
+          .             }
+          0         }
+          .         
+          .         void monitor_end()
+         -3 (0.0%)  {
+         -3 (0.0%)      if (enabled) {
+          .                 fprintf(outfile, "%s", monitor_buffer);
+          .                 fflush(outfile);
+          .                 fclose(outfile);
+          .             }
+         -3 (0.0%)  }
+          .         
+          .         // debugging thing basically
+          .         void monitor_flush_buf()
+          .         {
+          .             fprintf(outfile, "%s", monitor_buffer);
+          .             fflush(outfile);
+          .             monitor_buffer_position = 0;
+          .         }
+-- line 113 ----------------------------------------
+-- line 165 ----------------------------------------
+          .         }
+          .         
+          .         void cgc_monitor_write_heapstate()
+          .         {
+          .             monitor_write_heapstate();
+          .         }
+          .         
+          .         void monitor_write_heapstate()
+-95,640,444 (0.5%)  {
+-95,640,444 (0.5%)      if (enabled) {
+          .                 // granularity
+          .                 if (monitor_count_heapstate < monitor_granularity_heapstate) {
+          .                     monitor_count_heapstate++;
+          .                     return;
+          .                 }
+          .                 monitor_count_heapstate = 0;
+          .         
+          .                 // actually writing
+          .         
+          .                 _monitor_buffer_write("heapstate,%ld,%ld,%ld,%ld\n",
+          .                                       ALLOC_ALLOCATED_BLOCKS,
+          .                                       ALLOC_ALLOCATED_BYTES,
+          .                                       ALLOC_ALLOCATED_POOLS, GC_TOTAL_PTR_ASSIGNS);
+          .             }
+-63,760,296 (0.3%)  }
+          .         
+          .         void cgc_monitor_write_user(char *line, ...)
+    -11,955 (0.0%)  {
+     -2,391 (0.0%)      if (enabled) {
+          .                 va_list args;
+          .                 va_start(args, line);
+          .         
+          .                 _monitor_buffer_vwrite(line, args);
+          .         
+          .                 va_end(args);
+          .             }
+     -4,782 (0.0%)  }
+          .         
+          .         
+          .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/nop.h
+--------------------------------------------------------------------------------
+Ir________________ 
+
+         .          #ifndef NOP_H
+         .          #define NOP_H
+         .          
+         .          #include <stdlib.h>
+         .          #include "debug.h"
+         .          
+         .          void nop_init()
+         3 (-0.0%)  {
+         .          
+         3 (-0.0%)  }
+         .          
+         .          
+         .          void nop_alloc(void **p, size_t size)
+24,359,556 (-0.1%)  {
+16,239,704 (-0.1%)      void *space = malloc(size);
+ 8,119,852 (-0.0%)      if (space == NULL) {
+         .                  log_error("death and bad (failed to malloc)");
+         .              }
+12,179,778 (-0.1%)      *p = space;
+         .              log_trace("a %p", *p);
+12,179,778 (-0.1%)  }
+         .          
+         .          void nop_free(void *p)
+20,299,620 (-0.1%)  {
+         .              log_trace("f %p", p);
+12,179,772 (-0.1%)      free(p);
+12,179,772 (-0.1%)  }
+         .          
+         .          #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/ptr_stack.h
+--------------------------------------------------------------------------------
+Ir_________________ 
+
+-- line 25 ----------------------------------------
+           .         
+           .         static void **_ptr_stack_pop();
+           .         
+           .         // ==============================================
+           .         // Definitions
+           .         // ==============================================
+           .         
+           .         void ptr_stack_init()
+           0         {
+           .             log_info("ptr_stack_init()");
+           0             PTR_STACK = stack_init(100);
+           .             log_info("ptr_stack_init(...) == void");
+           0         }
+           .         
+           .         void ptr_stack_scope_start(int arg_count, ...)
+-119,550,555 (0.6%)  {
+           .             log_trace("scope start");
+           .             log_info("ptr_stack_scope_start(%d, ...)", arg_count);
+           .         
+           .             va_list args;
+ -47,820,222 (0.2%)      va_start(args, arg_count);
+           .         
+ -31,880,148 (0.2%)      stack_push(PTR_STACK, PTR_STACK_SENTINEL);
+ -39,850,185 (0.2%)      for (int i = 0; i < arg_count; i++) {
+           .                 void **p = va_arg(args, void **);
+           .                 gc_register(*p);
+           .                 ptr_stack_push(p);
+           .             }
+           .         
+           .             va_end(args);
+           .         
+           .             log_info("ptr_stack_scope_start(...) == void");
+ -47,820,222 (0.2%)  }
+           .         
+           .         void ptr_stack_push(void **p)
+-119,550,555 (0.6%)  {
+           .             log_info("ptr_stack_push(%p)", p);
+           .         
+ -47,820,222 (0.2%)      if (p == PTR_STACK_SENTINEL) {
+           .                 log_warn("Tried to push sentinel value onto PTR_STACK");
+           .                 return;
+           .             }
+-119,550,555 (0.6%)      stack_push(PTR_STACK, p);
+           .         
+           .             log_info("ptr_stack_push(...) == void");
+ -47,820,222 (0.2%)  }
+           .         
+           .         void ptr_stack_scope_end()
+ -31,880,152 (0.2%)  {
+           .             log_trace("scope end");
+           .             log_info("ptr_stack_scope_end()");
+           .         
+ -23,910,111 (0.1%)      while (true) {
+ -95,640,448 (0.5%)          void **p = _ptr_stack_pop();
+ -63,760,300 (0.3%)          if (p == PTR_STACK_SENTINEL)
+  -7,970,039 (0.0%)              break;
+-120,000,000 (0.6%)          gc_deregister(*p);
+           .             }
+           .         
+           .             log_info("ptr_stack_scope_end(...) == void");
+ -23,910,117 (0.1%)  }
+           .         
+           .         static void **_ptr_stack_pop()
+-127,520,596 (0.7%)  {
+           .             log_info("_ptr_stack_pop()");
+           .         
+-127,520,597 (0.7%)      void **p = stack_pop(PTR_STACK);
+           .         
+           .             log_info("_ptr_stack_pop() == %p", p);
+ -31,880,150 (0.2%)      return p;
+ -63,760,300 (0.3%)  }
+           .         
+           .         #endif
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/../../../include/stack.h
+--------------------------------------------------------------------------------
+Ir_________________ 
+
+-- line 23 ----------------------------------------
+           .         
+           .         static void _stack_grow(stack_t * s);
+           .         
+           .         // ==============================================
+           .         // Definitions
+           .         // ==============================================
+           .         
+           .         stack_t *stack_init(size_t initial_size)
+           0         {
+           0             stack_t *s = malloc(sizeof(stack_t));
+           .         
+           0             s->max_size = initial_size;
+           0             s->top = 0;
+           0             s->items = malloc(sizeof(void **) * initial_size);
+           .         
+           0             return s;
+           0         }
+           .         
+           .         void stack_push(stack_t *s, void **p)
+-191,280,888 (1.0%)  {
+-191,280,888 (1.0%)      if (s->top == s->max_size)
+           .                 _stack_grow(s);
+-350,681,628 (1.8%)      s->items[s->top++] = p;
+ -95,640,444 (0.5%)  }
+           .         
+           .         void **stack_pop(stack_t *s)
+-159,400,745 (0.8%)  {
+-127,520,596 (0.7%)      if (s->top == 0) {
+           .                 log_error("Tried to stack_pop with top == 0");
+           .                 exit(1);
+           .             }
+-382,561,800 (2.0%)      return s->items[--s->top];
+ -63,760,300 (0.3%)  }
+           .         
+           .         void stack_drop(stack_t *s)
+           .         {
+           .             free(s->items);
+           .             free(s);
+           .         }
+           .         
+           .         static void _stack_grow(stack_t *s)
+-- line 63 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Annotated source file: /home/madi/cosc490/cgc/test/bench/inf_chain/main.c
+--------------------------------------------------------------------------------
+Ir_________________ 
+
+-- line 4 ----------------------------------------
+           .         
+           .         
+           .         typedef struct list {
+           .             int head;
+           .             struct list *tail;
+           .         } list_t;
+           .         
+           .         void list_t__map_ptrs(list_t *a, void (*f)(void *))
+-120,000,000 (0.6%)  {
+-100,000,000 (0.5%)      (*f) (a->tail);
+ -60,000,000 (0.3%)  }
+           .         
+ -55,790,259 (0.3%)  void iterate() {
+ -47,820,222 (0.2%)      cgc_scope_start();
+           .         
+ -31,880,148 (0.2%)      cgc_scope_declare(list_t *, a);
+ -57,820,222 (0.3%)      cgc_alloc(&a, list_t);
+           .             
+ -31,880,148 (0.2%)      cgc_scope_declare(list_t*, b);
+ -57,820,222 (0.3%)      cgc_alloc(&b, list_t);
+           .             
+ -31,880,148 (0.2%)      cgc_scope_declare(list_t*, c);
+           .             //cgc_alloc(&c, list_t);
+           .         
+ -93,760,296 (0.5%)      cgc_assign(&a->tail, b);
+ -93,760,296 (0.5%)      cgc_assign(&b->tail, c);
+           .         
+ -47,820,226 (0.2%)      cgc_scope_end();
+ -23,910,114 (0.1%)      cgc_free(a);
+ -23,910,114 (0.1%)      cgc_free(b);
+           .             //cgc_free(c);
+  -7,970,038 (0.0%)      return;
+ -39,850,190 (0.2%)  }
+           .         
+           0         int main() {
+           0             cgc_scope_start();
+           .         
+           0             int total_iterations  = 10000000;
+           0             int target_recordings = 1000;
+           0             int threshold = total_iterations / target_recordings;
+           .         
+ -31,880,152 (0.2%)      for (int i = 0; i < total_iterations; i++) {
+ -15,940,074 (0.1%)          iterate();
+ -47,820,228 (0.2%)          if (i % threshold == 0) {
+      -4,782 (0.0%)              cgc_monitor_write_user("progress,%d\n", i);
+           .                 }
+           .             }
+          -8 (0.0%)      cgc_scope_end();
+          -1 (0.0%)      return 0;
+          -5 (0.0%)  
+
+--------------------------------------------------------------------------------
+-- Annotation summary
+--------------------------------------------------------------------------------
+Ir______________________ 
+
+-19,745,752,976 (101.4%)    annotated: files known & above threshold & readable, line numbers known
+              0             annotated: files known & above threshold & readable, line numbers unknown
+              0           unannotated: files known & above threshold & two or more non-identical
+    275,610,698  (-1.4%)  unannotated: files known & above threshold & unreadable 
+     12,177,489  (-0.1%)  unannotated: files known & below threshold
+    -23,760,368   (0.1%)  unannotated: files unknown
+
