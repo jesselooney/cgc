@@ -49,7 +49,11 @@ format:
 
 GOLD_CFLAGS += -I $(INCLUDE)
 GOLD_CFLAGS += -Wno-incompatible-pointer-types
-GOLD_CFLAGS += -DVERBOSITY=3
+ifdef V
+	GOLD_CFLAGS += -DVERBOSITY=$(V)
+else
+	GOLD_CFLAGS += -DVERBOSITY=3
+endif
 
 GOLD_ROOT = test/gold
 GOLD_SRC = $(GOLD_ROOT)/src

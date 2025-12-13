@@ -3,18 +3,20 @@
 
 #include <stdlib.h>
 #include "debug.h"
+#include "alloc.h"
 
 void nop_init()
 {
-
+    alloc_init();
 }
 
 
 void nop_alloc(void **p, size_t size)
 {
-    void *space = malloc(size);
+    void *space = alloc_new(size);
     if (space == NULL) {
-        log_error("death and bad (failed to malloc)");
+        log_error("death and bad (failed to alloc space for %ld)", size);
+        exit(-1);
     }
     *p = space;
     log_trace("a %p", *p);
@@ -23,7 +25,7 @@ void nop_alloc(void **p, size_t size)
 void nop_free(void *p)
 {
     log_trace("f %p", p);
-    free(p);
+    alloc_del(p);
 }
 
 #endif

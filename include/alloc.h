@@ -144,6 +144,8 @@ void *alloc_new(size_t size)
     // if smaller than smallest block, over-allocate in the smallest block size
     if (index < ALLOC_MIN_BLOCK_SIZE_EXP) {
         index = ALLOC_MIN_BLOCK_SIZE_EXP;
+        // HACKY HACKY HACKY. NEED TO FIX!
+        block_size = 32; // essentially, ALLOC_MIN_BLOCK_SIZE_POW
         log_info("block size too small; clamping index to %d", index);
     }
     // Fail if requested size is larger than the largest size class.
